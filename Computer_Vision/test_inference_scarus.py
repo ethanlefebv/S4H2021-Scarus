@@ -1,39 +1,61 @@
 import tensorflow as tf
 import numpy as np
 import cv2
-
-
+import time
 
 def main():
+    print('loading of the imports is done')
+    print('GO!')
     input_size = 416
     image_path = "./scarus_test.jpg"
-    model_path = "./yolov4-416-pouassons.tflite" # path vers le model .tflite
-    interpreter = tf.lite.Interpreter(model_path=model_path)
+    model_path = "./yolov4-416-fp16-pouassons.tflite" # path vers le model .tflite
+    image_data = load_saved_image(image_path, input_size)
+    print('loaded the image')
+    model_output = model_predict(model_path, image_data)
+    print('got the model output')
+    boxes_tensors, confidence_tensors = get_boxes_tensors(model_output[0], model_output[1],threshold=.85)
+    print('got the tensors')
+    output = output_parsing(boxes_tensors, confidence_tensors)
+    print('parsed the output')
+    print('Done')
+    print(output)
+    return output
+
+def load_saved_image(image_path, input_size):
     original_image = cv2.imread(image_path)
     original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
-    image_data = cv2.resize(original_image, (input_size,input_size))
-    image_data = image_data/255.
+    image_data = cv2.resize(original_image, (input_size, input_size))
+    image_data = image_data / 255.
     images_data = []
     images_data.append(image_data)
     images_data = np.asarray(images_data).astype(np.float32)
+
+    return images_data
+
+def model_predict(model_path, image_data):
+    interpreter = tf.lite.Interpreter(model_path=model_path)
     interpreter.allocate_tensors()
     input_details = interpreter.get_input_details()
     output_details = interpreter.get_output_details()
-    interpreter.set_tensor(input_details[0]['index'], images_data)
+    interpreter.set_tensor(input_details[0]['index'], image_data)
+    print('now invoking the model')
     interpreter.invoke()
-    model_output = [interpreter.get_tensor(output_details[i]['index']) for i in range(len(output_details))]
-    output = get_classes_positions_numpy(model_output[0], model_output[1],threshold=.85)
+    print('done invoking')
+    model_predictions = [interpreter.get_tensor(output_details[i]['index']) for i in range(len(output_details))]
 
-    return output
+    return model_predictions
 
-def get_classes_positions_numpy(boxes_data, scores,threshold=0.99):
+
+def get_boxes_tensors(boxes_data, scores,threshold=0.99):
     boxes_data_np = np.reshape(boxes_data,(10647,-1))
     scores_np = np.reshape(scores,(10647, -1))
     scores_max_np = np.amax(scores_np, axis=1)
     mask_np = np.argwhere(scores_max_np >= threshold)
-    class_boxes = boxes_data_np[mask_np] # devoir checker comment le sortir de tensors des tensors
-    pred_confidence = scores_np[mask_np] # same ol same ol
-    output = output_parsing(class_boxes, pred_confidence)
+    boxes = boxes_data_np[mask_np]
+    confidence = scores_np[mask_np]
+
+    return boxes, confidence
+
 
 def output_parsing(boxes, confidence):
     output = []
@@ -66,8 +88,7 @@ def output_parsing(boxes, confidence):
             output.append([x,y,box_class])
 
 
-
-    return (1,2)
+    return output
 
 if __name__ == '__main__':
     try:
