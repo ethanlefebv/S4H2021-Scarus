@@ -1,4 +1,4 @@
-import tensorflow as tf
+from tflite_runtime.interpreter import Interpreter
 import numpy as np
 import cv2
 
@@ -8,7 +8,7 @@ def main():
     print('GO!')
     input_size = 416
     image_path = "./scarus_test.jpg"
-    model_path = "./yolov4-416-fp16-pouassons.tflite" # path vers le model .tflite
+    model_path = "models/yolov4-416-fp16-pouassons.tflite"
     image_data = load_saved_image(image_path, input_size)
     print('loaded the image')
     model_output = model_predict(model_path, image_data)
@@ -33,7 +33,7 @@ def load_saved_image(image_path, input_size):
     return images_data
 
 def model_predict(model_path, image_data):
-    interpreter = tf.lite.Interpreter(model_path=model_path)
+    interpreter = Interpreter(model_path=model_path)
     interpreter.allocate_tensors()
     input_details = interpreter.get_input_details()
     output_details = interpreter.get_output_details()
