@@ -7,7 +7,7 @@ def main():
     print('loading of the imports is done')
     print('GO!')
     input_size = 416
-    image_path = "./scarus_test.jpg"
+    image_path = "./test_img.jpg"
     model_path = "models/yolov4-416-fp16-pouassons.tflite"
     image_data = load_saved_image(image_path, input_size)
     print('loaded the image')
@@ -21,16 +21,28 @@ def main():
     print(output)
     return output
 
+
 def load_saved_image(image_path, input_size):
-    original_image = cv2.imread(image_path)
-    original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
+    if image_path == 'camera':
+        original_image = take_picture()
+    else:
+        original_image = cv2.imread(image_path)
+        original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
     image_data = cv2.resize(original_image, (input_size, input_size))
     image_data = image_data / 255.
     images_data = []
     images_data.append(image_data)
     images_data = np.asarray(images_data).astype(np.float32)
-
     return images_data
+
+
+def take_picture():
+    cap = cv2.VideoCapture(0)
+    _, frame = cap.read()
+    cap.release()
+    cv2.imwrite('last_img.jpg', frame)
+    return frame
+
 
 def model_predict(model_path, image_data):
     interpreter = Interpreter(model_path=model_path)
