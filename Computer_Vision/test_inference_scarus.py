@@ -7,13 +7,13 @@ def main():
     print('loading of the imports is done')
     print('GO!')
     input_size = 416
-    image_path = "./test_img.jpg"
+    image_path = "camera"
     model_path = "models/yolov4-416-fp16-pouassons.tflite"
     image_data = load_saved_image(image_path, input_size)
     print('loaded the image')
     model_output = model_predict(model_path, image_data)
     print('got the model output')
-    boxes_tensors, confidence_tensors = get_boxes_tensors(model_output[0], model_output[1],threshold=.85)
+    boxes_tensors, confidence_tensors = get_boxes_tensors(model_output[0], model_output[1],threshold=.98)
     print('got the tensors')
     output = output_parsing(boxes_tensors, confidence_tensors)
     print('parsed the output')
