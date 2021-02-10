@@ -13,7 +13,7 @@ def main():
     print('loaded the image')
     model_output = model_predict(model_path, image_data)
     print('got the model output')
-    boxes_tensors, confidence_tensors = get_boxes_tensors(model_output[0], model_output[1],threshold=.85)
+    boxes_tensors, confidence_tensors = get_boxes_tensors(model_output[0], model_output[1],threshold=.98)
     print('got the tensors')
     output = output_parsing(boxes_tensors, confidence_tensors)
     print('parsed the output')
