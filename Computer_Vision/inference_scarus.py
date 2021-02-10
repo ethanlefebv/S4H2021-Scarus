@@ -8,7 +8,7 @@ def main():
     print('GO!')
     input_size = 416
     image_path = "./scarus_test.jpg"
-    model_path = "./yolov4-416-fp16-pouassons.tflite" # path vers le model .tflite
+    model_path = "./yolov4-416-fp16-pouassons.tflite" #Path vers le model .tflite
     image_data = load_saved_image(image_path, input_size)
     print('loaded the image')
     model_output = model_predict(model_path, image_data)
