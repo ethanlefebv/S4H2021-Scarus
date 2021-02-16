@@ -1,6 +1,7 @@
 import serial
 import argparse
 encoding = "utf-8"
+ID = '0'
 
 def print_received_data(data):
     print("Received from {0} : '{1}'\n".format(port, data))
@@ -20,7 +21,7 @@ def get_data(ser):
     data = ""
     # The first char is the ID of the sender: if the ID is this
     # device's ID, ignore the message
-    if tmp[0] != '0':
+    if tmp[0] != ID:
         data = tmp[1:]
     return data
 
@@ -28,10 +29,10 @@ def get_data(ser):
 def send_data(ser, data):
     """Write data to ser (a serial port).
 
-    Prepend the ID of the sender ('0' for the Pi) to the message.
+    Prepend the ID of the sender to the message.
     Return the sent message.
     """
-    message = "0{0}".format(data)
+    message = "{0}{1}".format(ID, data)
     ser.write(message.encode(encoding))
     return message
 
@@ -62,8 +63,14 @@ if __name__ == "__main__":
 
             print_sent_data(send_data(ser, "START"))
             print_received_data(get_data(ser))
+
+            print_sent_data(send_data(ser, "42|090"))
+            print_received_data(get_data(ser))
+            print_sent_data(send_data(ser, "12|-34"))
+            print_received_data(get_data(ser))
             print_sent_data(send_data(ser, "Hello World!"))
             print_received_data(get_data(ser))
+
 
             print_sent_data(send_data(ser, "STOP"))
             print_received_data(get_data(ser))
