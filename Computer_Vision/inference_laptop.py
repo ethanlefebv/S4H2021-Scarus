@@ -5,16 +5,17 @@ from Computer_Vision.inference_pipeline import *
 def main():
     print('loading of the imports is done')
     print('GO!')
-    image_path = "./scarus_test.jpg"
-    model_path = "models/yolov4-416-fp16-pouassons.tflite"
-    image_data = load_image(image_path=image_path)
+    image_path = "./deez_nuts026.jpg"
+    model_path = "models/yolov4-tiny-416-nutz.tflite"
+    image_data, original_image = load_image(image_path=image_path)
     print('loaded the image')
     interpreter = tf.lite.Interpreter(model_path=model_path)
     model_output = model_predict(image_data, interpreter)
     print('got the model output')
-    boxes_tensors, confidence_tensors = get_boxes_tensors(model_output[0], model_output[1],threshold=.98)
+    boxes_tensors, confidence_tensors = get_boxes_tensors(model_output[0], model_output[1],threshold=.95)
     print('got the tensors')
     output = output_parsing(boxes_tensors, confidence_tensors)
+    show_marked_image(original_image, output)
     print('parsed the output')
     print('Done')
     print(output)

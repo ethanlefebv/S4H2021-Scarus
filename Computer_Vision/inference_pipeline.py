@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 
+#Todo put the camera opening "cap = cv2.VideoCapture(0)" outside of the function so it wont take long to take a picture
+
 def load_image(input_size=416, image_path='camera'):
     """
     Load the image or take picture and gives it the size given in inputs and returns the image
@@ -11,22 +13,21 @@ def load_image(input_size=416, image_path='camera'):
     :return: a list of the images as np.float32. the list is useful when invoking darknet models
     """
     if image_path == 'camera':
-        original_image = take_picture()
+        original_image = take_picture(crop=True)
     else:
         original_image = cv2.imread(image_path)
         original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB) # TODO check if the image exists
 
-    image_data = crop_frame(original_image, 100, 100, 100, 100)
-    cv2.imwrite('cropped image.jpg', image_data)
-    image_data = cv2.resize(image_data, (input_size, input_size))
+    cv2.imwrite('cropped_image.jpg', original_image)
+    image_data = cv2.resize(original_image, (input_size, input_size))
     image_data = image_data / 255.  # darknet models need 0-1 range of pixels and not 0-255
     images_list = []
     images_list.append(image_data)
     images_list = np.asarray(images_list).astype(np.float32)
-    return images_list
+    return images_list, original_image
 
 
-def take_picture():
+def take_picture(crop=False):
     """
     :return: picture taken from the main camera of the device. frame is a numpy array ranging from 0-255
     """
@@ -34,6 +35,10 @@ def take_picture():
     _, frame = cap.read()
     cap.release()
     cv2.imwrite('last_img.jpg', frame)
+
+    if crop:
+        frame = frame[:,100:-100,:]
+
     return frame
 
 
@@ -76,8 +81,11 @@ def get_boxes_tensors(boxes_data, scores, threshold=0.99):
     :return: boxes: numpy array of and only the height, width and center.
            : confidence: numpy array with the confidence of each class for every boxes
     """
-    boxes_data_np = np.reshape(boxes_data, (10647, -1))
-    scores_np = np.reshape(scores, (10647, -1))
+    #   scores_np = np.reshape(scores, (10647, -1))
+    #    boxes_data_np = np.reshape(boxes_data, (5070, -1))
+
+    boxes_data_np = np.reshape(boxes_data, (5070, -1))
+    scores_np = np.reshape(scores, (5070, -1))
     scores_max_np = np.amax(scores_np, axis=1)
     mask_np = np.argwhere(scores_max_np >= threshold)
     boxes = boxes_data_np[mask_np]
@@ -129,3 +137,27 @@ def output_parsing(boxes, confidence):
             output.append([x, y, box_class])
 
     return output
+
+def show_marked_image(image, detected_list):
+    """
+    :param image: image on which to mark the detected objects
+    :param detected_list: list of the coordinate of the center of the objects
+    :return: image with the added dots and classes
+    """
+    marked_image = image
+    offset = 7
+    WHITE = (0,0,0)
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    font_size = .5
+    font_color = WHITE
+    font_thickness = 1
+    for detection in detected_list:
+        # model outputs on 416 size, we need to scale it to the image size
+        x = round(image.shape[1]*detection[0]/416)
+        y = round(image.shape[0]*detection[1]/416)
+        object_class = round(detection[2])
+        marked_image[y-offset:y+offset,x-offset:x+offset] = [0,0,255]
+        cv2.putText(marked_image, str(object_class), (x-offset, y+offset), font, font_size, font_color, font_thickness, cv2.LINE_AA)
+    cv2.imshow('unmarked',marked_image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
