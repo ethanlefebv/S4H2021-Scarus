@@ -1,6 +1,7 @@
 import serial
 import argparse
 encoding = "utf-8"
+baudrate = 115200
 ID = '0'
 
 def print_received_data(data):
@@ -57,7 +58,7 @@ if __name__ == "__main__":
 
     if args.d:
         print("Opening Serial communication with {0}.".format(port))
-        with serial.Serial(port, 9600) as ser:
+        with serial.Serial(port, baudrate) as ser:
             ser.flush()
             print_received_data(get_data(ser))
 

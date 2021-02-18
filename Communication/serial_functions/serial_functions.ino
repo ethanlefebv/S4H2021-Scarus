@@ -3,18 +3,18 @@
 class Coord
 {
 public:
-    Coord(int x = 0, int y = 0)
+    Coord(float x = 0.0, float y = 0.0)
     {
         _x = x;
         _y = y;
     }
     ~Coord() {}
 
-    int get_X()
+    float get_X()
     {
         return _x;
     }
-    int get_Y()
+    float get_Y()
     {
         return _y;
     }
@@ -25,18 +25,18 @@ public:
     }
 
 private:
-    int _x;
-    int _y;
+    float _x;
+    float _y;
 };
 
-
+int baudrate = 115200;
 bool run = false;
 const char ID = '1';
 String DESC = "This program parses coordinates and sends back the read coordinate.";
 
 void setup()
 {
-    Serial.begin(9600);
+    Serial.begin(baudrate);
 }
 
 void loop()
@@ -48,8 +48,11 @@ void loop()
     {
         // This is the main loop for the program.
 
-        Coord received_coord = parse_coord(msg);
-        send_data("I received: " + received_coord.print());
+        //Coord received_coord = parse_coord(msg);
+        String rec = parse_coord(msg);
+        send_data("I received: " + rec);
+        //send_data("I received: " + received_coord.print());
+        //send_data("I received: " + msg);
     }
     else
     {
@@ -82,7 +85,7 @@ String check_for_start_stop_signal(String msg)
 /// Return the received data.
 String get_data()
 {
-    String tmp = Serial.readStringUntil("\n");
+    String tmp = Serial.readStringUntil('\n');
     String data = "";
     // A string of one char would mean the message only contains
     // the ID of the sender, so ignore the message
@@ -101,19 +104,23 @@ String get_data()
 /// Parse a coordinate from a String.
 /// Return the coordinate if it was valid, else
 /// return (9999,9999).
-Coord parse_coord(String data)
+//Coord parse_coord(String data)
+String parse_coord(String data)
 {
-    Coord coord;
+    //Coord coord;
+    String coord;
     int separator_index = data.indexOf('|');
     if (separator_index != -1)
     {
         String x = data.substring(0, separator_index);
         String y = data.substring(separator_index + 1);
-        coord = Coord(x.toInt(), y.toInt());
+        //coord = Coord(x.toFloat(), y.toFloat());
+        coord = String(x.toFloat()) + '|' + String(y.toFloat());
     }
     else
     {
-        coord = Coord(9999, 9999);
+        coord = "9999.0|9999.0";
+        //coord = Coord(9999.0, 9999.0);
     }
     return coord;
 }
@@ -121,7 +128,7 @@ Coord parse_coord(String data)
 /// Write data to the serial port.
 /// Prepend the ID of the sender to the message.
 /// Return the sent message.
-void send_data(String data)
+String send_data(String data)
 {
     String message = ID + data;
     Serial.println(message);
