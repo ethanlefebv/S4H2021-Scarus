@@ -1,7 +1,6 @@
 import tensorflow as tf
 from Computer_Vision.inference_pipeline import *
 
-
 def main():
     camera = cv2.VideoCapture(0)
     print('loading of the imports is done')
@@ -21,6 +20,7 @@ def main():
     print('Done')
     print(output)
     return output
+
 
 
 
