@@ -1,41 +1,15 @@
 #include <Arduino.h>
 
-class Coord
+struct Coord
 {
-public:
-    Coord(float x = 0.0f, float y = 0.0f)
-    {
-        _x = x;
-        _y = y;
-    }
-    ~Coord() {}
+    int X;
+    int Y;
+};
 
-    float get_X()
-    {
-        return _x;
-    }
-    void set_X(float value)
-    {
-        _x = value;
-    }
-
-    float get_Y()
-    {
-        return _y;
-    }
-    void set_Y(float value)
-    {
-        _y = value;
-    }
-
-    String print()
-    {
-        return "X:" + String(_x) + " | Y:" + String(_y);
-    }
-
-private:
-    float _x;
-    float _y;
+struct Nut
+{
+    Coord coord;
+    int type;
 };
 
 int baudrate = 115200;
@@ -58,7 +32,7 @@ void loop()
         // This is the main loop for the program.
 
         Coord received_coord = parse_coord(msg);
-        send_data("I received: " + msg + ", which converts to: " + received_coord.print());
+        send_data("I received: " + msg + ", which converts to: " + coord_to_string(received_coord));
     }
     else
     {
@@ -118,18 +92,13 @@ Coord parse_coord(String data)
     {
         String x = data.substring(0, separator_index);
         String y = data.substring(separator_index + 1);
-        // Assume the received coord are int but were multiplied by
-        // 1000 before being sent, so convert them back
-        coord.set_X(x.toInt() / 1000.0f);
-        coord.set_Y(y.toInt() / 1000.0f);
-        //send_data("index of | : " + String(separator_index)
-        //        + ", x: " + String(x) + ", y: " + String(y)
-        //        + ", x.toFloat: " + String(x.toFloat()) + ", y.toFloat: " + String(y.toFloat()));
+        coord.X = x.toInt();
+        coord.Y = y.toInt();
     }
     else
     {
-        coord.set_X(9999.0f);
-        coord.set_Y(9999.0f);
+        coord.X = 9999;
+        coord.Y = 9999;
     }
     return coord;
 }
@@ -142,4 +111,9 @@ String send_data(String data)
     String message = ID + data;
     Serial.println(message);
     return message;
+}
+
+String coord_to_string(Coord coord)
+{
+    return "X:" + String(coord.X) + ", Y:" + String(coord.Y);
 }

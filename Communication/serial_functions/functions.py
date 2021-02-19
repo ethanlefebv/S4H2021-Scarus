@@ -45,7 +45,7 @@ def send_coord(ser, x, y):
     split operation when decoding.
     Return the sent message.
     """
-    coord = "{0}|{1}".format(x*1000, y*1000)
+    coord = "{0}|{1}".format(x, y)
     return send_data(ser, coord)
 
 
