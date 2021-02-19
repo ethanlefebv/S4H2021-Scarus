@@ -19,7 +19,6 @@ def load_image(camera=None, input_size=416, image_path='camera',crop=True):
         original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB) # TODO check if the image exists
     if crop == True:
         image_data = crop_frame(original_image)
-        cv2.imwrite("last_img.jpg", image_data)
     else:
         image_data = original_image
     image_data = cv2.resize(image_data, (input_size, input_size))
@@ -28,7 +27,6 @@ def load_image(camera=None, input_size=416, image_path='camera',crop=True):
     images_list = []
     images_list.append(image_data)
     images_list = np.asarray(images_list).astype(np.float32)
-    cv2.imwrite('last_img.jpg', image_data)
     return images_list, original_image
 
 
