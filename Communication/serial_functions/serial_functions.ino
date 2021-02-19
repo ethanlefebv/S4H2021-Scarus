@@ -3,7 +3,7 @@
 class Coord
 {
 public:
-    Coord(float x = 0.0, float y = 0.0)
+    Coord(float x = 0.0f, float y = 0.0f)
     {
         _x = x;
         _y = y;
@@ -14,9 +14,18 @@ public:
     {
         return _x;
     }
+    void set_X(float value)
+    {
+        _x = value;
+    }
+
     float get_Y()
     {
         return _y;
+    }
+    void set_Y(float value)
+    {
+        _y = value;
     }
 
     String print()
@@ -48,11 +57,8 @@ void loop()
     {
         // This is the main loop for the program.
 
-        //Coord received_coord = parse_coord(msg);
-        String rec = parse_coord(msg);
-        send_data("I received: " + rec);
-        //send_data("I received: " + received_coord.print());
-        //send_data("I received: " + msg);
+        Coord received_coord = parse_coord(msg);
+        send_data("I received: " + msg + ", which converts to: " + received_coord.print());
     }
     else
     {
@@ -104,23 +110,26 @@ String get_data()
 /// Parse a coordinate from a String.
 /// Return the coordinate if it was valid, else
 /// return (9999,9999).
-//Coord parse_coord(String data)
-String parse_coord(String data)
+Coord parse_coord(String data)
 {
-    //Coord coord;
-    String coord;
+    Coord coord;
     int separator_index = data.indexOf('|');
     if (separator_index != -1)
     {
         String x = data.substring(0, separator_index);
         String y = data.substring(separator_index + 1);
-        //coord = Coord(x.toFloat(), y.toFloat());
-        coord = String(x.toFloat()) + '|' + String(y.toFloat());
+        // Assume the received coord are int but were multiplied by
+        // 1000 before being sent, so convert them back
+        coord.set_X(x.toInt() / 1000.0f);
+        coord.set_Y(y.toInt() / 1000.0f);
+        //send_data("index of | : " + String(separator_index)
+        //        + ", x: " + String(x) + ", y: " + String(y)
+        //        + ", x.toFloat: " + String(x.toFloat()) + ", y.toFloat: " + String(y.toFloat()));
     }
     else
     {
-        coord = "9999.0|9999.0";
-        //coord = Coord(9999.0, 9999.0);
+        coord.set_X(9999.0f);
+        coord.set_Y(9999.0f);
     }
     return coord;
 }

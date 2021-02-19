@@ -45,7 +45,7 @@ def send_coord(ser, x, y):
     split operation when decoding.
     Return the sent message.
     """
-    coord = "{0}|{1}".format(x,y)
+    coord = "{0}|{1}".format(x*1000, y*1000)
     return send_data(ser, coord)
 
 
@@ -65,9 +65,9 @@ if __name__ == "__main__":
             print_sent_data(send_data(ser, "START"))
             print_received_data(get_data(ser))
 
-            print_sent_data(send_data(ser, "42|090"))
+            print_sent_data(send_coord(ser, 42, 90))
             print_received_data(get_data(ser))
-            print_sent_data(send_data(ser, "12|-34"))
+            print_sent_data(send_coord(ser, 0.12, -3.14))
             print_received_data(get_data(ser))
             print_sent_data(send_data(ser, "Hello World!"))
             print_received_data(get_data(ser))
