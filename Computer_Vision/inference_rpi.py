@@ -10,7 +10,6 @@ def main():
     image_path = "./test_img.jpg"
     model_path = "models/yolov4-416-fp16-pouassons.tflite"
     image_data = load_image()
-    image_data = crop_frame(image_data, 0,200,0,400)
     print('loaded the image')
     interpreter = Interpreter(model_path=model_path)
     model_output = model_predict(model_path, image_data, interpreter)

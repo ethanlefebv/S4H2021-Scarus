@@ -3,7 +3,7 @@ import numpy as np
 
 #Todo put the camera opening "cap = cv2.VideoCapture(0)" outside of the function so it wont take long to take a picture
 
-def load_image(input_size=416, image_path='camera'):
+def load_image(camera=None, input_size=416, image_path='camera',crop=True):
     """
     Load the image or take picture and gives it the size given in inputs and returns the image
 
@@ -13,36 +13,35 @@ def load_image(input_size=416, image_path='camera'):
     :return: a list of the images as np.float32. the list is useful when invoking darknet models
     """
     if image_path == 'camera':
-        original_image = take_picture(crop=True)
+        original_image = take_picture(camera)
     else:
         original_image = cv2.imread(image_path)
         original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB) # TODO check if the image exists
-
-    cv2.imwrite('cropped_image.jpg', original_image)
-    image_data = cv2.resize(original_image, (input_size, input_size))
-    image_data = image_data / 255.  # darknet models need 0-1 range of pixels and not 0-255
+    if crop == True:
+        image_data = crop_frame(original_image)
+        cv2.imwrite("last_img.jpg", image_data)
+    else:
+        image_data = original_image
+    image_data = cv2.resize(image_data, (input_size, input_size))
+    image_data = image_data / 255.
+    # darknet models need 0-1 range of pixels and not 0-255
     images_list = []
     images_list.append(image_data)
     images_list = np.asarray(images_list).astype(np.float32)
+    cv2.imwrite('last_img.jpg', image_data)
     return images_list, original_image
 
 
-def take_picture(crop=False):
+def take_picture(camera):
     """
     :return: picture taken from the main camera of the device. frame is a numpy array ranging from 0-255
     """
-    cap = cv2.VideoCapture(0)
-    _, frame = cap.read()
-    cap.release()
-    cv2.imwrite('last_img.jpg', frame)
-
-    if crop:
-        frame = frame[:,100:-100,:]
-
+    _, frame = camera.read()
+    camera.release()
     return frame
 
 
-def crop_frame(frame, crop_bottom, crop_top, crop_left, crop_right):
+def crop_frame(frame, crop_bottom=10, crop_top=38, crop_left=140, crop_right=75):
     """
     :param frame: list of images from take_picture function. A list of numpy arrays of varying shape depending on the
                 camera used. To see the  resolution of the image, use frame.shape
@@ -81,11 +80,8 @@ def get_boxes_tensors(boxes_data, scores, threshold=0.99):
     :return: boxes: numpy array of and only the height, width and center.
            : confidence: numpy array with the confidence of each class for every boxes
     """
-    #   scores_np = np.reshape(scores, (10647, -1))
-    #    boxes_data_np = np.reshape(boxes_data, (5070, -1))
-
-    boxes_data_np = np.reshape(boxes_data, (5070, -1))
-    scores_np = np.reshape(scores, (5070, -1))
+    boxes_data_np = np.reshape(boxes_data, (boxes_data.shape[1], -1))
+    scores_np = np.reshape(scores, (boxes_data.shape[1], -1))
     scores_max_np = np.amax(scores_np, axis=1)
     mask_np = np.argwhere(scores_max_np >= threshold)
     boxes = boxes_data_np[mask_np]
@@ -104,7 +100,7 @@ def output_parsing(boxes, confidence):
     distance_min = 1000  # to do : SEE HOW DISTANT ARE THE NUTS FROM EACH OTHER
     classes = np.array([])
     for box in confidence:
-        classes = np.append(classes, np.argmax(confidence[0][0]).astype(np.int8))
+        classes = np.append(classes, np.argmax(box[0]).astype(np.int8))
 
     x = np.array([])
     y = np.array([])
@@ -144,7 +140,7 @@ def show_marked_image(image, detected_list):
     :param detected_list: list of the coordinate of the center of the objects
     :return: image with the added dots and classes
     """
-    marked_image = image
+    marked_image = image[0]
     offset = 7
     WHITE = (0,0,0)
     font = cv2.FONT_HERSHEY_SIMPLEX
@@ -153,10 +149,10 @@ def show_marked_image(image, detected_list):
     font_thickness = 1
     for detection in detected_list:
         # model outputs on 416 size, we need to scale it to the image size
-        x = round(image.shape[1]*detection[0]/416)
-        y = round(image.shape[0]*detection[1]/416)
+        x = round(marked_image.shape[1]*detection[0]/416)
+        y = round(marked_image.shape[0]*detection[1]/416)
         object_class = round(detection[2])
-        marked_image[y-offset:y+offset,x-offset:x+offset] = [0,0,255]
+        marked_image[y-offset:y+offset,x-offset:x+offset] = [0,0,1]
         cv2.putText(marked_image, str(object_class), (x-offset, y+offset), font, font_size, font_color, font_thickness, cv2.LINE_AA)
     cv2.imshow('unmarked',marked_image)
     cv2.waitKey(0)
