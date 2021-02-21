@@ -1,6 +1,8 @@
 # S4H2021-Scarus
 
-This project is SCARA-like robot picking and placing nuts (as in bolts, nuts, washers) with the help of a machine-vision system. 
+This project is SCARA-like robot picking and placing nuts (as in bolts, nuts, washers) with the help of a computer vision system. 
+
+Further informations about the vision system can be found in its own [documentation](Computer_Vision/README.md)
 
 ## Hardware requirements
 This section lists the hardware used when developing the project. Some parts could be swapped for variants, eg. the Raspberry Pi could have more RAM or be some more recent version.
@@ -23,7 +25,9 @@ On a desktop/laptop :
 - TODO
 
 ## Installation
-- TODO
-
+- For the computer vision, OpenCV for Python, Numpy and tflite_runtime is needed, all 3 can be obtained with this command : 
+```bash
+pip install -r requirements.txt
+```
 ## License
 TODO

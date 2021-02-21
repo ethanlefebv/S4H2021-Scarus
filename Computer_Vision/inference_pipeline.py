@@ -9,6 +9,7 @@ def inference(camera,model_path):
     model_output = model_predict(image_data, interpreter)
     boxes_tensors, confidence_tensors = get_boxes_tensors(model_output[0], model_output[1], threshold=.90)
     output = output_parsing(boxes_tensors, confidence_tensors)
+    # show_marked_image(image_data,output) # Uncomment if you want to see the image with predictions
     print(output)
     return output
 
