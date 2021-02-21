@@ -38,15 +38,24 @@ def send_data(ser, data):
     return message
 
 
-def send_coord(ser, x, y):
-    """Write a 2D coordinate to ser (a serial port).
+def coord_to_string(x, y):
+    """Convert a 2D coordinate to a string.
 
     Insert '|' between the coordinates to simplify the
     split operation when decoding.
-    Return the sent message.
+    Return the string.
     """
-    coord = "{0}|{1}".format(x, y)
-    return send_data(ser, coord)
+    return "{0}|{1}".format(x, y)
+
+
+def nut_to_string(type, x, y):
+    """Convert a Nut to a string.
+
+    Insert '/' between the type and coordinate to simplify
+    the split operation when decoding.
+    Return the string.
+    """
+    return "{0}/{1}".format(type, coord_to_string(x, y))
 
 
 if __name__ == "__main__":
@@ -65,9 +74,9 @@ if __name__ == "__main__":
             print_sent_data(send_data(ser, "START"))
             print_received_data(get_data(ser))
 
-            print_sent_data(send_coord(ser, 42, 90))
+            print_sent_data(send_data(ser, nut_to_string(0, 12, 34)))
             print_received_data(get_data(ser))
-            print_sent_data(send_coord(ser, 0.12, -3.14))
+            print_sent_data(send_data(ser, nut_to_string(1, -56, -78)))
             print_received_data(get_data(ser))
             print_sent_data(send_data(ser, "Hello World!"))
             print_received_data(get_data(ser))

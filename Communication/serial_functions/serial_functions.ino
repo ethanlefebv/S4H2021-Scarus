@@ -15,7 +15,7 @@ struct Nut
 int baudrate = 115200;
 bool run = false;
 const char ID = '1';
-String DESC = "This program parses coordinates and sends back the read coordinate.";
+String DESC = "This program parses nuts and coordinates and sends back the read data.";
 
 void setup()
 {
@@ -31,8 +31,8 @@ void loop()
     {
         // This is the main loop for the program.
 
-        Coord received_coord = parse_coord(msg);
-        send_data("I received: " + msg + ", which converts to: " + coord_to_string(received_coord));
+        Nut received_nut = parse_nut(msg);
+        send_data("I received: " + msg + ", which converts to: " + nut_to_string(received_nut));
     }
     else
     {
@@ -103,6 +103,26 @@ Coord parse_coord(String data)
     return coord;
 }
 
+/// Parse and return a Nut from a String.
+Nut parse_nut(String data)
+{
+    Nut nut;
+    int separator_index = data.indexOf('/');
+    if (separator_index != -1)
+    {
+        String type = data.substring(0, separator_index);
+        String coord_string = data.substring(separator_index + 1);
+        nut.type = type.toInt();
+        nut.coord = parse_coord(coord_string);
+    }
+    else
+    {
+        nut.type = 9;
+        nut.coord = parse_coord("");
+    }
+    return nut;
+}
+
 /// Write data to the serial port.
 /// Prepend the ID of the sender to the message.
 /// Return the sent message.
@@ -116,4 +136,9 @@ String send_data(String data)
 String coord_to_string(Coord coord)
 {
     return "X:" + String(coord.X) + ", Y:" + String(coord.Y);
+}
+
+String nut_to_string(Nut nut)
+{
+    return "Type:" + String(nut.type) + ", " + coord_to_string(nut.coord);
 }
