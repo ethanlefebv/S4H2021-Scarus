@@ -1,3 +1,4 @@
 opencv-python==4.5.1.48
 tflite-runtime==2.5.0
 numpy==1.19.2
+pyserial==3.5

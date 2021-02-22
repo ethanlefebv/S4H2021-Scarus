@@ -5,11 +5,11 @@ baudrate = 115200
 ID = '0'
 
 def print_received_data(data):
-    print("Received from {0} : '{1}'\n".format(port, data))
+    print("Received : '{0}'\n".format(data))
 
 
 def print_sent_data(data):
-    print("Sent to {0} : '{1}'".format(port, data))
+    print("Sent : '{0}'".format(data))
 
 
 def get_data(ser):
@@ -48,7 +48,7 @@ def coord_to_string(x, y):
     return "{0}|{1}".format(x, y)
 
 
-def nut_to_string(type, x, y):
+def nut_to_string(x, y, type):
     """Convert a Nut to a string.
 
     Insert '/' between the type and coordinate to simplify
