@@ -25,9 +25,13 @@ On a desktop/laptop :
 - TODO
 
 ## Installation
-- For the computer vision, OpenCV for Python, Numpy and tflite_runtime is needed, all 3 can be obtained with this command : 
+- For the computer vision, OpenCV for Python, Numpy and tflite_runtime is needed, all 3 can be obtained with thess command : 
 ```bash
 pip install -r requirements.txt
 ```
+```
+pip install --extra-index-url https://google-coral.github.io/py-repo/ tflite_runtime
+```
+
 ## License
 TODO
