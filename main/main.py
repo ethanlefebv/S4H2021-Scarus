@@ -10,7 +10,7 @@ def init_sequence():
 
 
 def main():
-    model_path = "Computer_Vision/models/yolov4-tiny-416-fp16-nutz.tflite"
+    model_path = "../Computer_Vision/models/yolov4-tiny-416-fp16-nutz.tflite"
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', required=True, help='Port used for serial communication.')
@@ -28,17 +28,17 @@ def main():
         x = first_nut[0]
         y = first_nut[1]
         nut_class = first_nut[2]
-        print("Opening Serial communication with {0}.".format(port))
-        with serial.Serial(port, baudrate) as ser:
-            ser.flush()
-            print_received_data(get_data(ser))
-            print_sent_data(send_data(ser, "START"))
-            print_received_data(get_data(ser))
-            print_sent_data(send_data(ser, nut_to_string(nut_class, x, y)))
-            print_received_data(get_data(ser))
-            print_sent_data(send_data(ser, "STOP"))
-            print_received_data(get_data(ser))
-            print("Closing Serial communication with {0}.".format(port))
+        # print("Opening Serial communication with {0}.".format(port))
+        # with serial.Serial(port, baudrate) as ser:
+        #     ser.flush()
+        #     print_received_data(get_data(ser))
+        #     print_sent_data(send_data(ser, "START"))
+        #     print_received_data(get_data(ser))
+        #     print_sent_data(send_data(ser, nut_to_string(nut_class, x, y)))
+        #     print_received_data(get_data(ser))
+        #     print_sent_data(send_data(ser, "STOP"))
+        #     print_received_data(get_data(ser))
+        #     print("Closing Serial communication with {0}.".format(port))
 
     camera.release()
     return 1
