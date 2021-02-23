@@ -1,61 +1,23 @@
 #include <Arduino.h>
+#include "comm_functions.h"
 
-struct Coord
-{
-    int X;
-    int Y;
-};
-
-struct Nut
-{
-    Coord coord;
-    int type;
-};
-
-int baudrate = 115200;
-bool run = false;
 const char ID = '1';
-String DESC = "This program parses nuts and coordinates and sends back the read data.";
-
-void setup()
-{
-    Serial.begin(baudrate);
-}
-
-void loop()
-{
-    String msg = get_data();
-    msg = check_for_start_stop_signal(msg);
-
-    if (run)
-    {
-        // This is the main loop for the program.
-
-        Nut received_nut = parse_nut(msg);
-        send_data("I received: " + msg + ", which converts to: " + nut_to_string(received_nut));
-    }
-    else
-    {
-        send_data("Waiting for the START command.");
-        delay(1000);
-    }
-}
 
 /// Verify if the current message says to start
 /// or stop the program.
 /// Return the message.
-String check_for_start_stop_signal(String msg)
+String check_for_start_stop_signal(String msg, bool* run)
 {
     if (msg == "START")
     {
-        send_data("Starting the program. " + DESC);
+        send_data("Starting the program.");
         msg = get_data();
-        run = true;
+        *run = true;
     }
     else if (msg == "STOP")
     {
         send_data("Stopping the program.");
-        run = false;
+        *run = false;
     }
     return msg;
 }

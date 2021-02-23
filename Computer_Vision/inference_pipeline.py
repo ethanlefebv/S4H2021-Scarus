@@ -1,7 +1,17 @@
 import cv2
 import numpy as np
+from tflite_runtime.interpreter import Interpreter
 
-#Todo put the camera opening "cap = cv2.VideoCapture(0)" outside of the function so it wont take long to take a picture
+def inference(camera,model_path):
+    image_path = "camera"
+    image_data, original_image = load_image(camera=camera, input_size=416, image_path=image_path)
+    interpreter = Interpreter(model_path=model_path)
+    model_output = model_predict(image_data, interpreter)
+    boxes_tensors, confidence_tensors = get_boxes_tensors(model_output[0], model_output[1], threshold=.90)
+    output = output_parsing(boxes_tensors, confidence_tensors)
+    # show_marked_image(image_data,output) # Uncomment if you want to see the image with predictions
+    # print(output)
+    return output
 
 def load_image(camera=None, input_size=416, image_path='camera',crop=True):
     """
@@ -35,7 +45,6 @@ def take_picture(camera):
     :return: picture taken from the main camera of the device. frame is a numpy array ranging from 0-255
     """
     _, frame = camera.read()
-    camera.release()
     return frame
 
 
@@ -47,8 +56,6 @@ def crop_frame(frame, crop_bottom=10, crop_top=38, crop_left=140, crop_right=75)
     :return: The same image but cropped with the desired measurements
     """
     frame = frame[crop_bottom:-1-crop_top, crop_left:-1-crop_right]
-    cv2.imwrite('last_image.jpg', frame)
-
     return frame
 
 
@@ -62,9 +69,7 @@ def model_predict(image_data, interpreter):
     input_details = interpreter.get_input_details()
     output_details = interpreter.get_output_details()
     interpreter.set_tensor(input_details[0]['index'], image_data)
-    print('now invoking the model')
     interpreter.invoke()
-    print('done invoking')
     model_predictions = [interpreter.get_tensor(output_details[i]['index']) for i in range(len(output_details))]
 
     return model_predictions
