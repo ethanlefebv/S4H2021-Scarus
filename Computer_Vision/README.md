@@ -1,5 +1,6 @@
 #Computer Vision
-This section will present the way the computer vision pipelin works and how the training for the costum models has been done. 
+This section will present the way the computer vision pipelin works and how the training for the costum models has been done.
+
 ![slide](doc_images/slide_assembly.jpg)
 
 ## training
