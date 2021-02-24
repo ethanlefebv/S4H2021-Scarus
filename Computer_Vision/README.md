@@ -14,7 +14,7 @@ We also followed TheCodingBug's Youtube playlist for further details on the inst
 
 
 ### 2- Data collection
-We collected the data in a setting resembling as closely as possible our actual use case. Therefore, we had to build the slide before collecting our data, so we could take pictures of the nuts at a fix distance with the same background in different lightings. This allows the model to train itself on a more representative data set to make sure it is as accurate as possible in this setting.
+We collected the data in a setting resembling as closely as possible our actual use case. Therefore, we had to build the slide before collecting our data, so we could take pictures of the nuts at a fixed distance but with varying lights input. This allows the model to train itself on a more representative data set to make sure it is as accurate as possible in this setting.
 
 ### 3- Labeling
 We labeled our data using a yolo compatible software called labelImg, from this GitHub: https://github.com/tzutalin/labelImg.
@@ -25,6 +25,3 @@ Since we wanted to run the inference on a Raspberry Pi, we used YoloV4's "tiny" 
 
 ### 5- Converting the model from Darknet to TensorFlow Lite
 In order to run the inference smoothly on the Raspberry Pi, we also converted the model to TensorFlow Lite using this GitHub: https://github.com/hunglc007/tensorflow-yolov4-tflite.
-
-## Inference pipeline
-
