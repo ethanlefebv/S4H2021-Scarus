@@ -58,7 +58,7 @@ def crop_frame(frame, crop_bottom=10, crop_top=38, crop_left=140, crop_right=75)
     :other params: minimal and maximal value of both axis of the input image
     :return: The same image but cropped with the desired measurements
     """
-    frame = frame[crop_bottom:-1-crop_top, crop_left:-1-crop_right]
+    frame = frame[crop_bottom:-crop_top, crop_left:-crop_right]
     return frame
 
 
