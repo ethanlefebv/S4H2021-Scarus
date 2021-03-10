@@ -34,10 +34,10 @@ def main():
     camera_index = args.c
     port = args.p
 
-    camera, ser = init_sequence(camera_index, port) # WILL NEED TO PUT THE REST OF THE INIT IN IT (LOL)
+    camera, ser = init_sequence(camera_index, port)
 
     #while True:
-    box_list = inference(camera,model_path)
+    box_list = inference(camera, model_path)
     first_nut = box_list[0]
     x = first_nut[0]
     y = first_nut[1]
