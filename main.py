@@ -44,7 +44,9 @@ def main():
     nut_class = int(first_nut[2])
     print('Yolo model outputs : ', x , y, nut_class)
     print_sent_data(send_data(ser, nut_to_string(x, y, nut_class)))
-    print_received_data(get_data(ser))
+    print_received_data(get_data(ser)) # Confirmation of Nut
+    print_received_data(get_data(ser)) # Angles returned by IK
+    print_received_data(get_data(ser)) # Confirmation of motors moved
     print_sent_data(send_data(ser, "STOP"))
     print_received_data(get_data(ser))
 
