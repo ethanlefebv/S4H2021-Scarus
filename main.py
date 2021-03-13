@@ -3,6 +3,7 @@ from Communication.serial_functions.functions import *
 import cv2
 import serial
 import argparse
+import time
 
 #encoding = "utf-8"
 #baudrate = 115200
@@ -36,8 +37,11 @@ def main():
 
     camera, ser = init_sequence(camera_index, port)
 
-    #while True:
+    start_time = time.time()
     box_list = inference(camera, model_path)
+    inf_time = time.time() - start_time
+    print("Time spent in inference : {0}".format(inf_time))
+
     first_nut = box_list[0]
     x = first_nut[0]
     y = first_nut[1]
