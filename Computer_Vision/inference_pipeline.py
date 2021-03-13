@@ -2,9 +2,12 @@ import cv2
 import numpy as np
 from tflite_runtime.interpreter import Interpreter
 
-def inference(camera,model_path):
-    image_path = "camera"
-    image_data, original_image = load_image(camera=camera, input_size=416, image_path=image_path)
+def inference(input_image, model_path):
+    if isinstance(input_image, str):
+        image_path = input_image
+    else:
+        image_path = "camera"
+    image_data, original_image = load_image(camera=input_image, input_size=416, image_path=image_path)
     interpreter = Interpreter(model_path=model_path)
     model_output = model_predict(image_data, interpreter)
     boxes_tensors, confidence_tensors = get_boxes_tensors(model_output[0], model_output[1], threshold=.90)
@@ -154,8 +157,12 @@ def show_marked_image(image, detected_list):
         # model outputs on 416 size, we need to scale it to the image size
         x = round(marked_image.shape[1]*detection[0]/416)
         y = round(marked_image.shape[0]*detection[1]/416)
-        object_class = round(detection[2])
-        marked_image[y-offset:y+offset,x-offset:x+offset] = [0,0,1]
+        object_class = int(round(detection[2]))
+        if object_class == 0:
+            marked_image[y-offset:y+offset,x-offset:x+offset] = [0,0,1]
+        elif object_class == 1:
+            marked_image[y - offset:y + offset, x - offset:x + offset] = [1, 0, 0]
+
         cv2.putText(marked_image, str(object_class), (x-offset, y+offset), font, font_size, font_color, font_thickness, cv2.LINE_AA)
     cv2.imshow('unmarked',marked_image)
     cv2.waitKey(0)

@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
-#ifndef InverseCinematics_h
-#define InverseCinematics_h
+#ifndef inverse_kinematics_h
+#define inverse_kinematics_h
 
 void inverse_kinematics(float x, float y, float THETA[4]);
 

@@ -12,8 +12,12 @@ void multiply(float matrix1[4][4], float matrix2[4], float result[4])
     }
 }
 
-void inverseKinematics(float x, float y, float THETA[4])
+void inverse_kinematics(float x, float y, float THETA[4])
 {
+    for(int i = 0; i < 4; i++)
+    {
+        THETA[i] = THETA[i] * M_PI / 180;
+    }
     float Ln = 0.192;
     float La = 0.192;
     float Lb = 0.192;
@@ -32,7 +36,7 @@ void inverseKinematics(float x, float y, float THETA[4])
         {(125*sin(THETA[1]))/(36*(cos(THETA[1])*sin(THETA[3]) - cos(THETA[3])*sin(THETA[1]))), -(125*cos(THETA[1]))/(36*(cos(THETA[1])*sin(THETA[3]) - cos(THETA[3])*sin(THETA[1]))),  (125*sin(THETA[1]))/(36*(cos(THETA[1])*sin(THETA[3]) - cos(THETA[3])*sin(THETA[1]))), -(125*cos(THETA[1]))/(36*(cos(THETA[1])*sin(THETA[3]) - cos(THETA[3])*sin(THETA[1])))}};
 
     float theMatrix[4] = {};
-    for( int i = 0; i<30; i++)
+    for(int i = 0; i < 30; i++)
     {
         F[0] = Ln+La*sin(THETA[0])+Lc*sin(THETA[2])-Lb*sin(THETA[1])-Ld*sin(THETA[3]);
         F[1] = Lb*cos(THETA[1])+Ld*cos(THETA[3])-La*cos(THETA[0])-Lc*cos(THETA[2]);
@@ -63,7 +67,7 @@ void inverseKinematics(float x, float y, float THETA[4])
 
         multiply(FINV, F, theMatrix);
 
-        for( int j = 0; j<4; j++)
+        for(int j = 0; j < 4; j++)
         {
             THETA[j] = THETA[j] - theMatrix[j];
         }
