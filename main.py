@@ -15,6 +15,7 @@ def init_opencr(ser):
     while get_data(ser) != "Starting the program.": # Need further research, maybe the way we communicate is not
                                                     # the best.
         time.sleep(0.1)
+        print('moma')
     print_received_data(get_data(ser))
 
 

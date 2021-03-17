@@ -106,17 +106,10 @@ void update_goal_angles(float current_angles[4])
 void pick()
 {
 	send_data("I received: " + msg + ", which converts to: " + nut_to_string(current_nut));
-	digitalWrite(3, HIGH);
-	digitalWrite(4, HIGH);
-	delay(5000);
-	digitalWrite(3, LOW);
-	digitalWrite(4, LOW);
-	delay(5000);
-	digitalWrite(3, HIGH);
-	digitalWrite(4, HIGH);
-	delay(5000);
-	digitalWrite(3, LOW);
-	digitalWrite(4, LOW);
+  digitalWrite(51, HIGH);
+  delay(10000);
+  digitalWrite(51, LOW);
+  delay(10000);
 }
 
 
@@ -163,8 +156,7 @@ void setup()
     Serial.begin(BAUDRATE);
     init_motor(ID_MOTOR_1, NAME_MOTOR_1, MODEL_NB_MOTOR_1);
     init_motor(ID_MOTOR_2, NAME_MOTOR_2, MODEL_NB_MOTOR_2);
-    pinMode(3, OUTPUT); // pin 3
-    pinMode(4, OUTPUT); // pin 4
+    pinMode(51, OUTPUT); // pin 3
 }
 
 void loop()
