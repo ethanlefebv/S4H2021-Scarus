@@ -51,7 +51,7 @@ void parse_msg();
 void init_motor(uint8_t motor_ID)
 {
     const char* motor_name = "";
-    const uint16_t model_number = 0;
+    uint16_t model_number = 0;
     const char* error_message;
     dyna_workbench.init(motor_name, 57600, &error_message);
     dyna_workbench.ping(motor_ID, &model_number, &error_message);

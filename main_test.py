@@ -48,40 +48,40 @@ def main():
     inf_time = time.time() - start_time
     print("Time spent in inference : {0}".format(inf_time))
 
-    while True:
-        try:
-            stdin = sys.stdin.read()
-            if "\n" in stdin:
-                break
-        except IOError:
-            pass
+    # while True:
+    #     try:
+    #         stdin = sys.stdin.read()
+    #         if "\n" in stdin:
+    #             break
+    #     except IOError:
+    #         pass
 
-        first_nut = nuts_list[0]
-        x = first_nut[0]
-        y = first_nut[1]
-        nut_class = int(first_nut[2])
-        print('Yolo model outputs : ', x, y, nut_class)
-        print_sent_data(send_data(ser, nut_to_string(x, y, nut_class)))
+    first_nut = nuts_list[0]
+    x = first_nut[0]
+    y = first_nut[1]
+    nut_class = int(first_nut[2])
+    print('Yolo model outputs : ', x, y, nut_class)
+    print_sent_data(send_data(ser, nut_to_string(x, y, nut_class)))
 
-        data = None
-        while data == None:
-            data = get_data(ser)
-            print_received_data(data) # Confirmation of Nut
+    data = None
+    while data == None:
+        data = get_data(ser)
+        print_received_data(data) # Confirmation of Nut
 
-        data = None
-        while data == None:
-            data = get_data(ser)
-            print_received_data(get_data(ser)) # Angles returned by IK
+    data = None
+    while data == None:
+        data = get_data(ser)
+        print_received_data(get_data(ser)) # Angles returned by IK
 
-        start_time = time.time()
-        nuts_list = inference(camera, model_path)
-        inf_time = time.time() - start_time
-        print("Time spent in inference : {0}".format(inf_time))
+    start_time = time.time()
+    nuts_list = inference(camera, model_path)
+    inf_time = time.time() - start_time
+    print("Time spent in inference : {0}".format(inf_time))
 
-        data = None
-        while data == None:
-            data = get_data(ser)
-            print_received_data(get_data(ser)) # Confirmation of motors moved
+    data = None
+    while data == None:
+        data = get_data(ser)
+        print_received_data(get_data(ser)) # Confirmation of motors moved
     #endWhile
 
     print_sent_data(send_data(ser, "STOP"))
