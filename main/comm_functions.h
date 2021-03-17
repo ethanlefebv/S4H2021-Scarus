@@ -15,11 +15,6 @@ struct Nut
     int type;
 };
 
-/// Verify if the current message says to start
-/// or stop the program.
-/// Return the message.
-String check_for_start_stop_signal(String msg, bool* run);
-
 /// Read data from the serial port.
 /// Ignore the message if it was sent by this device.
 /// Return the received data.

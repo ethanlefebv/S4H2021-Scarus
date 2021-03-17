@@ -3,25 +3,6 @@
 
 const char ID = '1';
 
-/// Verify if the current message says to start
-/// or stop the program.
-/// Return the message.
-String check_for_start_stop_signal(String msg, bool* run)
-{
-    if (msg == "START")
-    {
-        send_data("Starting the program.");
-        msg = get_data();
-        *run = true;
-    }
-    else if (msg == "STOP")
-    {
-        send_data("Stopping the program.");
-        *run = false;
-    }
-    return msg;
-}
-
 /// Read data from the serial port.
 /// Ignore the message if it was sent by this device.
 /// Return the received data.
