@@ -50,7 +50,7 @@ def main():
     x = first_nut[0]
     y = first_nut[1]
     nut_class = int(first_nut[2])
-    print('Yolo model outputs : ', x , y, nut_class)
+    print('Yolo model outputs : ', x, y, nut_class)
     print_sent_data(send_data(ser, nut_to_string(x, y, nut_class)))
     print_received_data(get_data(ser)) # Confirmation of Nut
     print_received_data(get_data(ser)) # Angles returned by IK
