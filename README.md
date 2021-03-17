@@ -1,6 +1,8 @@
 # S4H2021-Scarus
 
-This project is SCARA-like robot picking and placing nuts (as in bolts, nuts, washers) with the help of a machine-vision system. 
+This project is SCARA-like robot picking and placing nuts (as in bolts, nuts, washers) with the help of a computer vision system. 
+
+Further informations about the vision system can be found in its own [documentation](Computer_Vision/README.md)
 
 ## Hardware requirements
 This section lists the hardware used when developing the project. Some parts could be swapped for variants, eg. the Raspberry Pi could have more RAM or be some more recent version.
@@ -23,7 +25,28 @@ On a desktop/laptop :
 - TODO
 
 ## Installation
-- TODO
+### On a desktop/laptop :
+#### Install arduino-cli and upload code to the OpenCR
+Even though the main program runs on a Raspberry Pi, a laptop/desktop is required to upload code to the OpenCR.
+1. Visit the [installation page](https://arduino.github.io/arduino-cli/latest/installation/) and use the [installation script](https://arduino.github.io/arduino-cli/latest/installation/#use-the-install-script)
+2. Follow the [steps](https://arduino.github.io/arduino-cli/latest/command-line-completion/) to enable command-line completion (optional but very useful)
+3. [Create a config file](https://arduino.github.io/arduino-cli/latest/getting-started/#create-a-configuration-file) to [add](https://arduino.github.io/arduino-cli/latest/getting-started/#adding-3rd-party-cores) the [OpenCR libraries](https://emanual.robotis.com/docs/en/software/arduino_ide/#preferences)
+4. Install the required compiler (as mentioned [here](https://emanual.robotis.com/docs/en/software/arduino_ide/#compiler-settings)): `sudo apt install libncurses5-dev:i386`
+5. Run the following line : `arduino-cli core update-index && arduino-cli core install OpenCR:OpenCR`
+6. Make sure your user is part of the 'dialout' group : `sudo adduser USER dialout` (you need to logout and log back in after doing this step)
+
+To upload a sketch, go in the sketch directory (eg. *main/* for the main program) and run the following line : `arduino-cli compile --upload -b OpenCR:OpenCR:OpenCR -p PORT` where PORT is typically COM1 on Windows and /dev/ttyACM0 on Linux (modify the index accordingly).
+
+### On the Raspberry Pi :
+#### Install needed programs for computer vision
+For the computer vision, three programs/modules are needed : OpenCV for Python, Numpy and tflite_runtime. They can be installed by running the following lines :
+```bash
+pip install -r requirements.txt
+```
+```
+pip install --extra-index-url https://google-coral.github.io/py-repo/ tflite_runtime
+```
+#### TODO
 
 ## License
 TODO

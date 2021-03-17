@@ -1,42 +1,25 @@
 #include <Arduino.h>
 
-class Coord
+struct Coord
 {
-public:
-    Coord(int x = 0, int y = 0)
-    {
-        _x = x;
-        _y = y;
-    }
-    ~Coord() {}
-
-    int get_X()
-    {
-        return _x;
-    }
-    int get_Y()
-    {
-        return _y;
-    }
-
-    String print()
-    {
-        return "X:" + String(_x) + " | Y:" + String(_y);
-    }
-
-private:
-    int _x;
-    int _y;
+    int X;
+    int Y;
 };
 
+struct Nut
+{
+    Coord coord;
+    int type;
+};
 
+int baudrate = 115200;
 bool run = false;
 const char ID = '1';
-String DESC = "This program parses coordinates and sends back the read coordinate.";
+String DESC = "This program parses nuts and coordinates and sends back the read data.";
 
 void setup()
 {
-    Serial.begin(9600);
+    Serial.begin(baudrate);
 }
 
 void loop()
@@ -48,8 +31,8 @@ void loop()
     {
         // This is the main loop for the program.
 
-        Coord received_coord = parse_coord(msg);
-        send_data("I received: " + received_coord.print());
+        Nut received_nut = parse_nut(msg);
+        send_data("I received: " + msg + ", which converts to: " + nut_to_string(received_nut));
     }
     else
     {
@@ -82,7 +65,7 @@ String check_for_start_stop_signal(String msg)
 /// Return the received data.
 String get_data()
 {
-    String tmp = Serial.readStringUntil("\n");
+    String tmp = Serial.readStringUntil('\n');
     String data = "";
     // A string of one char would mean the message only contains
     // the ID of the sender, so ignore the message
@@ -109,21 +92,53 @@ Coord parse_coord(String data)
     {
         String x = data.substring(0, separator_index);
         String y = data.substring(separator_index + 1);
-        coord = Coord(x.toInt(), y.toInt());
+        coord.X = x.toInt();
+        coord.Y = y.toInt();
     }
     else
     {
-        coord = Coord(9999, 9999);
+        coord.X = 9999;
+        coord.Y = 9999;
     }
     return coord;
+}
+
+/// Parse and return a Nut from a String.
+Nut parse_nut(String data)
+{
+    Nut nut;
+    int separator_index = data.indexOf('/');
+    if (separator_index != -1)
+    {
+        String type = data.substring(0, separator_index);
+        String coord_string = data.substring(separator_index + 1);
+        nut.type = type.toInt();
+        nut.coord = parse_coord(coord_string);
+    }
+    else
+    {
+        nut.type = 9;
+        nut.coord = parse_coord("");
+    }
+    return nut;
 }
 
 /// Write data to the serial port.
 /// Prepend the ID of the sender to the message.
 /// Return the sent message.
-void send_data(String data)
+String send_data(String data)
 {
     String message = ID + data;
     Serial.println(message);
     return message;
+}
+
+String coord_to_string(Coord coord)
+{
+    return "X:" + String(coord.X) + ", Y:" + String(coord.Y);
+}
+
+String nut_to_string(Nut nut)
+{
+    return "Type:" + String(nut.type) + ", " + coord_to_string(nut.coord);
 }

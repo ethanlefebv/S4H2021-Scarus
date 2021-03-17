@@ -1,14 +1,15 @@
 import serial
 import argparse
 encoding = "utf-8"
+baudrate = 115200
 ID = '0'
 
 def print_received_data(data):
-    print("Received from {0} : '{1}'\n".format(port, data))
+    print("Received : '{0}'\n".format(data))
 
 
 def print_sent_data(data):
-    print("Sent to {0} : '{1}'".format(port, data))
+    print("Sent : '{0}'".format(data))
 
 
 def get_data(ser):
@@ -37,15 +38,24 @@ def send_data(ser, data):
     return message
 
 
-def send_coord(ser, x, y):
-    """Write a 2D coordinate to ser (a serial port).
+def coord_to_string(x, y):
+    """Convert a 2D coordinate to a string.
 
     Insert '|' between the coordinates to simplify the
     split operation when decoding.
-    Return the sent message.
+    Return the string.
     """
-    coord = "{0}|{1}".format(x,y)
-    return send_data(ser, coord)
+    return "{0}|{1}".format(x, y)
+
+
+def nut_to_string(x, y, type):
+    """Convert a Nut to a string.
+
+    Insert '/' between the type and coordinate to simplify
+    the split operation when decoding.
+    Return the string.
+    """
+    return "{0}/{1}".format(type, coord_to_string(x, y))
 
 
 if __name__ == "__main__":
@@ -57,16 +67,16 @@ if __name__ == "__main__":
 
     if args.d:
         print("Opening Serial communication with {0}.".format(port))
-        with serial.Serial(port, 9600) as ser:
+        with serial.Serial(port, baudrate) as ser:
             ser.flush()
             print_received_data(get_data(ser))
 
             print_sent_data(send_data(ser, "START"))
             print_received_data(get_data(ser))
 
-            print_sent_data(send_data(ser, "42|090"))
+            print_sent_data(send_data(ser, nut_to_string(0, 12, 34)))
             print_received_data(get_data(ser))
-            print_sent_data(send_data(ser, "12|-34"))
+            print_sent_data(send_data(ser, nut_to_string(1, -56, -78)))
             print_received_data(get_data(ser))
             print_sent_data(send_data(ser, "Hello World!"))
             print_received_data(get_data(ser))
