@@ -14,7 +14,7 @@ Authors: Alec Gagnon,      gaga2120
 
 
 // ---------- Enumerations ----------
-enum class Mode { Sleep, Wait, Parse, Moving};
+enum class State { Sleep, Wait, Parse, Moving};
 
 
 // ---------- Constants ----------
@@ -32,11 +32,10 @@ const int BAUDRATE = 115200;
 
 // ---------- Variables ----------
 // --- Motors ---
-DynamixelWorkbench motor_1;
-DynamixelWorkbench motor_2;
+DynamixelWorkbench dyna_workbench;
 
 // --- Data ---
-Mode current_mode = Mode::Sleep;
+State current_state = State::Sleep;
 String msg = String();
 Nut current_nut;
 
@@ -44,7 +43,8 @@ Nut current_nut;
 
 // ---------- Function declarations ----------
 // --- Motors ---
-void init_motor(DynamixelWorkbench* motor, uint8_t motor_ID, const char* motor_name, uint16_t model_number);
+void init_motor(uint8_t motor_ID, const char* motor_name, uint16_t model_number);
+void stop_motors();
 void run_demo();
 
 // --- Messages ---
@@ -55,12 +55,25 @@ void parse_msg();
 
 // ---------- Function definitions ----------
 // --- Motors ---
-void init_motor(DynamixelWorkbench* motor, uint8_t motor_ID, const char* motor_name, uint16_t model_number)
+void init_motor(uint8_t motor_ID, const char* motor_name, uint16_t model_number)
 {
     const char* error_message;
-    motor->init(motor_name, 57600, &error_message);
-    motor->ping(motor_ID, &model_number, &error_message);
-    motor->jointMode(motor_ID, 0, 0, &error_message);
+    dyna_workbench.init(motor_name, 57600, &error_message);
+    dyna_workbench.ping(motor_ID, &model_number, &error_message);
+    dyna_workbench.jointMode(motor_ID, 0, 0, &error_message);
+    dyna_workbench.torqueOff(motor_ID, &error_message);
+}
+
+void start_motors()
+{
+    dyna_workbench.torqueOn(ID_MOTOR_1);
+    dyna_workbench.torqueOn(ID_MOTOR_2);
+}
+
+void stop_motors()
+{
+    dyna_workbench.torqueOff(ID_MOTOR_1);
+    dyna_workbench.torqueOff(ID_MOTOR_2);
 }
 
 void run_demo()
@@ -75,11 +88,11 @@ void run_demo()
     send_data("OpenCR: Angles : " + String((int)current_angles[0]) + ", " + String((int)current_angles[1]));
 
     // move the motors to the wanted angles
-    motor_1.goalPosition(ID_MOTOR_1, (int32_t)2095);//current_angles[0]);
-    motor_2.goalPosition(ID_MOTOR_2, (int32_t)2095);//current_angles[1]);
+    dyna_workbench.goalPosition(ID_MOTOR_1, (int32_t)2095);//current_angles[0]);
+    dyna_workbench.goalPosition(ID_MOTOR_2, (int32_t)2095);//current_angles[1]);
     send_data("OpenCR: Moved motors.");
 
-    current_mode = Mode::Wait;
+    current_state = State::Wait;
 }
 
 // --- Messages ---
@@ -89,7 +102,8 @@ void check_for_start()
     if (msg == "START")
     {
         send_data("Starting the program.");
-        current_mode = Mode::Wait;
+        start_motors();
+        current_state = State::Wait;
     }
 }
 
@@ -98,7 +112,8 @@ void check_for_stop()
     if (msg == "STOP")
     {
         send_data("Stopping the program.");
-        current_mode = Mode::Sleep;
+        stop_motors();
+        current_state = State::Sleep;
     }
 }
 
@@ -108,7 +123,7 @@ void parse_msg()
     if (nut.coord.X != 9999 && nut.coord.Y != 9999 && nut.type != 9)
     {
         current_nut = nut;
-        current_mode = Mode::Moving;
+        current_state = State::Moving;
     }
     else
     {
@@ -121,35 +136,35 @@ void parse_msg()
 void setup()
 {
     Serial.begin(BAUDRATE);
-    init_motor(&motor_1, ID_MOTOR_1, NAME_MOTOR_1, MODEL_NB_MOTOR_1);
-    init_motor(&motor_2, ID_MOTOR_2, NAME_MOTOR_2, MODEL_NB_MOTOR_2);
+    init_motor(ID_MOTOR_1, NAME_MOTOR_1, MODEL_NB_MOTOR_1);
+    init_motor(ID_MOTOR_2, NAME_MOTOR_2, MODEL_NB_MOTOR_2);
 }
 
 void loop()
 {
-    switch (current_mode)
+    switch (current_state)
     {
-        case Mode::Sleep:
+        case State::Sleep:
             // Waiting for the signal to start the program
             send_data("Waiting for the START command.");
-            delay(1000);
+            delay(100);
             check_for_start();
             break;
 
-        case Mode::Wait:
+        case State::Wait:
             // Waiting for data on the serial port
             msg = get_data();
             if (msg.length() != 0)
             {
-                current_mode = Mode::Parse;
+                current_state = State::Parse;
             }
             break;
 
-        case Mode::Parse:
+        case State::Parse:
             parse_msg();
             break;
 
-        case Mode::Moving:
+        case State::Moving:
             run_demo();
             break;
     }
