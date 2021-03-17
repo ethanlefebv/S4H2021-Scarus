@@ -95,6 +95,31 @@ void run_demo()
     current_state = State::Wait;
 }
 
+void update_goal_angles(float current_angles[4])
+{
+	// this function will get the new angles to get to the position of the current nut
+	float x = current_nut.coord.X;
+	float y = current_nut.coord.Y;
+	inverse_kinematics(x, y, current_angles);
+}
+
+void pick()
+{
+	send_data("I received: " + msg + ", which converts to: " + nut_to_string(current_nut));
+	digitalWrite(3, HIGH);
+	digitalWrite(4, HIGH);
+	delay(5000);
+	digitalWrite(3, LOW);
+	digitalWrite(4, LOW);
+	delay(5000);
+	digitalWrite(3, HIGH);
+	digitalWrite(4, HIGH);
+	delay(5000);
+	digitalWrite(3, LOW);
+	digitalWrite(4, LOW);
+}
+
+
 // --- Messages ---
 void check_for_start()
 {
@@ -138,6 +163,8 @@ void setup()
     Serial.begin(BAUDRATE);
     init_motor(ID_MOTOR_1, NAME_MOTOR_1, MODEL_NB_MOTOR_1);
     init_motor(ID_MOTOR_2, NAME_MOTOR_2, MODEL_NB_MOTOR_2);
+    pinMode(3, OUTPUT); // pin 3
+    pinMode(4, OUTPUT); // pin 4
 }
 
 void loop()
@@ -161,12 +188,15 @@ void loop()
             break;
 
         case State::Parse:
+        	// checks for start, stop and sets nut values
             parse_msg();
             break;
 
         case State::Moving:
-            run_demo();
+            //run_demo();
+            pick();
             break;
+            current_state = State::Wait;
     }
     delay(10);
 }
