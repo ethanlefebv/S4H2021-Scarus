@@ -23,6 +23,8 @@ const uint8_t ID_MOTOR_1 = 1;
 const uint8_t ID_MOTOR_2 = 2;
 const uint16_t MODEL_NB_MOTOR_1 = 0;
 const uint16_t MODEL_NB_MOTOR_2 = 0;
+const uint8_t VERRIN_PIN = 22; //51; // GPIO 4
+const uint8_t SOLENOID_PIN = 23; //53; // GPIO 6
 const char* NAME_MOTOR_1 = "";
 const char* NAME_MOTOR_2 = "";
 
@@ -95,21 +97,25 @@ void run_demo()
     current_state = State::Wait;
 }
 
-void update_goal_angles(float current_angles[4])
-{
-	// this function will get the new angles to get to the position of the current nut
-	float x = current_nut.coord.X;
-	float y = current_nut.coord.Y;
-	inverse_kinematics(x, y, current_angles);
-}
 
 void pick()
 {
 	send_data("I received: " + msg + ", which converts to: " + nut_to_string(current_nut));
-  digitalWrite(51, HIGH);
-  delay(10000);
-  digitalWrite(51, LOW);
-  delay(10000);
+	digitalWrite(VERRIN_PIN, HIGH);
+	digitalWrite(SOLENOID_PIN, LOW);
+	delay(10000);
+	digitalWrite(VERRIN_PIN, LOW);
+	digitalWrite(SOLENOID_PIN, HIGH);
+	dyna_workbench.goalPosition(ID_MOTOR_1, (int32_t)2095);//current_angles[0]);
+	dyna_workbench.goalPosition(ID_MOTOR_2, (int32_t)2095);//current_angles[1]);
+	delay(10000);
+	digitalWrite(VERRIN_PIN, HIGH);
+	digitalWrite(SOLENOID_PIN, LOW);
+	dyna_workbench.goalPosition(ID_MOTOR_1, (int32_t)1000);
+	dyna_workbench.goalPosition(ID_MOTOR_2, (int32_t)1000);
+	delay(10000);
+	digitalWrite(VERRIN_PIN, LOW);
+	digitalWrite(SOLENOID_PIN, HIGH);
 }
 
 
@@ -156,7 +162,8 @@ void setup()
     Serial.begin(BAUDRATE);
     init_motor(ID_MOTOR_1, NAME_MOTOR_1, MODEL_NB_MOTOR_1);
     init_motor(ID_MOTOR_2, NAME_MOTOR_2, MODEL_NB_MOTOR_2);
-    pinMode(51, OUTPUT); // pin 3
+    pinMode(VERRIN_PIN, OUTPUT); // pin 4
+    pinMode(SOLENOID_PIN, OUTPUT); // pin 6
 }
 
 void loop()
