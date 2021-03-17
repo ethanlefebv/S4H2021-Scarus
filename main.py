@@ -10,12 +10,7 @@ import time
 
 def init_opencr(ser):
     msg = get_data(ser)
-    #TODO verify the OpenCR is waiting to start
     print_sent_data(send_data(ser, "START"))
-    while get_data(ser) != "Starting the program.": # Need further research, maybe the way we communicate is not
-                                                    # the best.
-        time.sleep(0.1)
-        print('moma')
     print_received_data(get_data(ser))
 
 
