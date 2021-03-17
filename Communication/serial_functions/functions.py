@@ -22,8 +22,9 @@ def get_data(ser):
     data = ""
     # The first char is the ID of the sender: if the ID is this
     # device's ID, ignore the message
-    if tmp[0] != ID:
-        data = tmp[1:]
+    if tmp != "":
+        if tmp[0] != ID:
+            data = tmp[1:]
     return data
 
 

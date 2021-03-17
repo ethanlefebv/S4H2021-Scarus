@@ -23,18 +23,18 @@ String get_data();
 /// Parse a coordinate from a String.
 /// Return the coordinate if it was valid, else
 /// return (9999,9999).
-Coord parse_coord(String data);
+Coord parse_coord(const String& data);
 
 /// Parse and return a Nut from a String.
-Nut parse_nut(String data);
+Nut parse_nut(const String& data);
 
 /// Write data to the serial port.
 /// Prepend the ID of the sender to the message.
 /// Return the sent message.
-String send_data(String data);
+String send_data(const String& data);
 
-String coord_to_string(Coord coord);
+String coord_to_string(const Coord& coord);
 
-String nut_to_string(Nut nut);
+String nut_to_string(const Nut& nut);
 
 #endif

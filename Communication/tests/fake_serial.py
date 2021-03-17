@@ -30,9 +30,14 @@ class FakeSerial:
         return string
 
     def readline(self):
-        returnIndex = self._data.decode(self._encoding).index("\n")
-        string = ""
+        returnIndex = self._data.decode(self._encoding).find("\n")
+        string = b""
         if returnIndex != -1:
             string = self._data[0:returnIndex+1]
             self._data = self._data[returnIndex+1:]
         return string
+
+    def flush(self):
+        self._receivedData = b""
+        self._data = b""
+

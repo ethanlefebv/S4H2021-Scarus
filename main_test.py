@@ -1,7 +1,7 @@
 from Computer_Vision.inference_pipeline import *
 from Communication.serial_functions.functions import *
 import cv2
-import serial
+import Communication.tests.fake_serial as fake_ser
 import argparse
 import time
 import sys
@@ -24,7 +24,8 @@ def init_sequence(camera_index, port):
     camera = cv2.VideoCapture(camera_index)
 
     print("Opening Serial communication with {0}.".format(port))
-    ser = serial.Serial(port, baudrate)
+    #ser = serial.Serial(port, baudrate)
+    ser = fake_ser.FakeSerial()
     ser.flush()
     init_opencr(ser)
     return camera, ser
