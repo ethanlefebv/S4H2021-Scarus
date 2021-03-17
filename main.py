@@ -1,6 +1,5 @@
 from Computer_Vision.inference_pipeline import *
 from Communication.serial_functions.functions import *
-import path
 import cv2
 import serial
 import argparse
@@ -13,6 +12,9 @@ def init_opencr(ser):
     msg = get_data(ser)
     #TODO verify the OpenCR is waiting to start
     print_sent_data(send_data(ser, "START"))
+    while get_data(ser) != "Starting the program.": # Need further research, maybe the way we communicate is not
+                                                    # the best.
+        time.sleep(0.1)
     print_received_data(get_data(ser))
 
 
