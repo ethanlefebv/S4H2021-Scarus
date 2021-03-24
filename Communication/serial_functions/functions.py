@@ -35,7 +35,7 @@ def send_data(ser, data):
     Prepend the ID of the sender to the message.
     Return the sent message.
     """
-    message = "{0}{1}".format(ID, data)
+    message = "{0}{1}\n".format(ID, data)
     ser.write(message.encode(encoding))
     return message
 

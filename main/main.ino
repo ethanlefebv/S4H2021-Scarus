@@ -21,6 +21,8 @@ enum class State { Sleep, Wait, Parse, Moving};
 // --- Motors ---
 const uint8_t ID_MOTOR_1 = 1;
 const uint8_t ID_MOTOR_2 = 2;
+const uint8_t VERRIN_PIN = 22; //51; // GPIO 4
+const uint8_t SOLENOID_PIN = 23; //53; // GPIO 6
 
 
 // ---------- Variables ----------
@@ -90,6 +92,28 @@ void run_demo()
     current_state = State::Wait;
 }
 
+
+void pick()
+{
+	send_data("I received: " + msg + ", which converts to: " + nut_to_string(current_nut));
+	digitalWrite(VERRIN_PIN, HIGH);
+	digitalWrite(SOLENOID_PIN, LOW);
+	delay(10000);
+	digitalWrite(VERRIN_PIN, LOW);
+	digitalWrite(SOLENOID_PIN, HIGH);
+	dyna_workbench.goalPosition(ID_MOTOR_1, (int32_t)2095);//current_angles[0]);
+	dyna_workbench.goalPosition(ID_MOTOR_2, (int32_t)2095);//current_angles[1]);
+	delay(10000);
+	digitalWrite(VERRIN_PIN, HIGH);
+	digitalWrite(SOLENOID_PIN, LOW);
+	dyna_workbench.goalPosition(ID_MOTOR_1, (int32_t)1000);
+	dyna_workbench.goalPosition(ID_MOTOR_2, (int32_t)1000);
+	delay(10000);
+	digitalWrite(VERRIN_PIN, LOW);
+	digitalWrite(SOLENOID_PIN, HIGH);
+}
+
+
 // --- Messages ---
 void check_for_start()
 {
@@ -130,12 +154,14 @@ void parse_msg()
 // ---------- Main functions ----------
 void setup()
 {
-    // --- Messages ---
     const int BAUDRATE = 115200;
     
     Serial.begin(BAUDRATE);
+  
     init_motor(ID_MOTOR_1);
     init_motor(ID_MOTOR_2);
+    pinMode(VERRIN_PIN, OUTPUT); // pin 4
+    pinMode(SOLENOID_PIN, OUTPUT); // pin 6
 }
 
 void loop()
@@ -159,11 +185,16 @@ void loop()
             break;
 
         case State::Parse:
+        	// checks for start, stop and sets nut values
             parse_msg();
             break;
 
         case State::Moving:
-            run_demo();
+            //run_demo();
+            //pick();
+            delay(1000);
+            //send_data("Done");
+            current_state = State::Wait;
             break;
     }
     delay(10);
