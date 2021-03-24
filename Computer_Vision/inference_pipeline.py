@@ -3,7 +3,7 @@ import numpy as np
 from tflite_runtime.interpreter import Interpreter
 import time
 
-def send_inference_result(cam, model_path):
+def get_inference_nut(cam, model_path):
     nuts_list = timed_inference(cam, model_path)
     if nuts_list == []:
         nuts_list = [[0, 0, -1]]
@@ -13,8 +13,7 @@ def send_inference_result(cam, model_path):
     y = first_nut[1]
     nut_class = int(first_nut[2])
     print('Yolo model outputs : ', x, y, nut_class)
-    if first_nut != [0, 0, -1]:
-        print_sent_data(send_data(ser, nut_to_string(x, y, nut_class)))
+    return first_nut
 
 def timed_inference(input_image, model_path):
     start_time = time.time()

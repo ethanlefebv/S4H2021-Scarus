@@ -1,21 +1,14 @@
 from Communication.serial_functions.functions import *
-import Communication.tests.fake_serial as fake_ser
 import cv2
 import time
 import argparse
+import serial
 
 def init_sequence():
     baudrate = 115200
     camera_index, port = init_parse()
     cam = init_camera(camera_index)
     ser = init_port(port, baudrate)
-    init_opencr(ser)
-    return cam, port, ser
-
-def init_fake_sequence():
-    camera_index, port = init_parse()
-    cam = init_camera(camera_index)
-    ser = init_fake_port(port)
     init_opencr(ser)
     return cam, port, ser
 
@@ -35,12 +28,6 @@ def init_camera(camera_index):
 def init_port(port, baudrate):
     print("Opening Serial communication with {0}.".format(port))
     ser = serial.Serial(port, baudrate)
-    ser.flush()
-    return ser
-
-def init_fake_port(port):
-    print("Opening Serial communication with {0}.".format(port))
-    ser = fake_ser.FakeSerial()
     ser.flush()
     return ser
 
