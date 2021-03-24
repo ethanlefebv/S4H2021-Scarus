@@ -4,6 +4,13 @@ This project is SCARA-like robot picking and placing nuts (as in bolts, nuts, wa
 
 Further information about the vision system can be found in its own [documentation](Computer_Vision/README.md).
 
+## Table of contents
+1. [Hardware requirements](#hardware-requirements)
+2. [Software requirements](#software-requirements)
+3. [Installation](#installation)
+4. [Running the program](#running-the-main-program)
+5. [License](#license)
+
 ## Hardware requirements
 This section lists the hardware used when developing the project. Some parts could be swapped for variants, eg. the Raspberry Pi could have more RAM or be some more recent version.
 - Raspberry Pi 4 Model B, 4GB (along with a power cable, microSD card, etc.)
@@ -35,8 +42,8 @@ A laptop/desktop is required to upload code to the OpenCR (the libraries are cur
 
 ##### Steps for Arduino IDE
 1. Install Arduino IDE using the [official guide](https://www.arduino.cc/en/Guide)
-2. Follow the instructions [here](https://emanual.robotis.com/docs/en/software/arduino_ide/#preferences) to add the additional Boards Manager URL.
-3. Follow the instructions [here](https://emanual.robotis.com/docs/en/software/arduino_ide/#install-the-board-package-via-boards-manager) to install the OpenCR board and libraries.
+2. Follow the instructions [here](https://emanual.robotis.com/docs/en/software/arduino_ide/#preferences) to add the additional Boards Manager URL
+3. Follow the instructions [here](https://emanual.robotis.com/docs/en/software/arduino_ide/#install-the-board-package-via-boards-manager) to install the OpenCR board and libraries
 
 ##### Steps for arduino-cli
 1. Install arduino-cli
@@ -54,7 +61,8 @@ A laptop/desktop is required to upload code to the OpenCR (the libraries are cur
     ```
 5. Install the OpenCR board and libraries : 
     ```bash
-    arduino-cli core update-index && arduino-cli core install OpenCR:OpenCR
+    arduino-cli core update-index
+    arduino-cli core install OpenCR:OpenCR
     ```
 6. If on Linux, make sure your user is part of the 'dialout' group (you need to logout and log back in after doing this step) :
     ```bash
