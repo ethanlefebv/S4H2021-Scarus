@@ -1,5 +1,6 @@
 import serial
 import argparse
+import time
 encoding = "utf-8"
 baudrate = 115200
 ID = '0'
@@ -57,6 +58,14 @@ def nut_to_string(x, y, type):
     Return the string.
     """
     return "{0}/{1}".format(type, coord_to_string(x, y))
+
+def wait_for_data(ser, check):
+    data = None
+    #while data != check:
+    time.sleep(0.1)
+    data = get_data(ser)
+    print_received_data(data)
+    return data
 
 
 if __name__ == "__main__":
