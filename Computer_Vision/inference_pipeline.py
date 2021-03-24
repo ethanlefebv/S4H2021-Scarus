@@ -1,6 +1,27 @@
 import cv2
 import numpy as np
 from tflite_runtime.interpreter import Interpreter
+import time
+
+def send_inference_result(cam, model_path):
+    nuts_list = timed_inference(cam, model_path)
+    if nuts_list == []:
+        nuts_list = [[0, 0, -1]]
+
+    first_nut = nuts_list[0]
+    x = first_nut[0]
+    y = first_nut[1]
+    nut_class = int(first_nut[2])
+    print('Yolo model outputs : ', x, y, nut_class)
+    if first_nut != [0, 0, -1]:
+        print_sent_data(send_data(ser, nut_to_string(x, y, nut_class)))
+
+def timed_inference(input_image, model_path):
+    start_time = time.time()
+    nuts_list = inference(input_image, model_path)
+    inf_time = time.time() - start_time
+    print("Time spent in inference : {0}".format(inf_time))
+    return nuts_list
 
 def inference(input_image, model_path):
     if isinstance(input_image, str):

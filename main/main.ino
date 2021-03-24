@@ -21,15 +21,8 @@ enum class State { Sleep, Wait, Parse, Moving};
 // --- Motors ---
 const uint8_t ID_MOTOR_1 = 1;
 const uint8_t ID_MOTOR_2 = 2;
-const uint16_t MODEL_NB_MOTOR_1 = 0;
-const uint16_t MODEL_NB_MOTOR_2 = 0;
 const uint8_t VERRIN_PIN = 22; //51; // GPIO 4
 const uint8_t SOLENOID_PIN = 23; //53; // GPIO 6
-const char* NAME_MOTOR_1 = "";
-const char* NAME_MOTOR_2 = "";
-
-// --- Messages ---
-const int BAUDRATE = 115200;
 
 
 // ---------- Variables ----------
@@ -45,7 +38,7 @@ Nut current_nut;
 
 // ---------- Function declarations ----------
 // --- Motors ---
-void init_motor(uint8_t motor_ID, const char* motor_name, uint16_t model_number);
+void init_motor(uint8_t motor_ID);
 void stop_motors();
 void run_demo();
 
@@ -57,8 +50,10 @@ void parse_msg();
 
 // ---------- Function definitions ----------
 // --- Motors ---
-void init_motor(uint8_t motor_ID, const char* motor_name, uint16_t model_number)
+void init_motor(uint8_t motor_ID)
 {
+    const char* motor_name = "";
+    uint16_t model_number = 0;
     const char* error_message;
     dyna_workbench.init(motor_name, 57600, &error_message);
     dyna_workbench.ping(motor_ID, &model_number, &error_message);
@@ -159,9 +154,12 @@ void parse_msg()
 // ---------- Main functions ----------
 void setup()
 {
+    const int BAUDRATE = 115200;
+    
     Serial.begin(BAUDRATE);
-    init_motor(ID_MOTOR_1, NAME_MOTOR_1, MODEL_NB_MOTOR_1);
-    init_motor(ID_MOTOR_2, NAME_MOTOR_2, MODEL_NB_MOTOR_2);
+  
+    init_motor(ID_MOTOR_1);
+    init_motor(ID_MOTOR_2);
     pinMode(VERRIN_PIN, OUTPUT); // pin 4
     pinMode(SOLENOID_PIN, OUTPUT); // pin 6
 }
