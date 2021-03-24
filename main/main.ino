@@ -193,9 +193,11 @@ void loop()
 
         case State::Moving:
             //run_demo();
-            pick();
-            break;
+            //pick();
+            delay(1000);
+            //send_data("Done");
             current_state = State::Wait;
+            break;
     }
     delay(10);
 }
