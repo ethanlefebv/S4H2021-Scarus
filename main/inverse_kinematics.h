@@ -3,6 +3,6 @@
 #ifndef inverse_kinematics_h
 #define inverse_kinematics_h
 
-void inverse_kinematics(float x, float y, float THETA[4]);
+void inverse_kinematics(float x /*meters*/, float y /*meters*/, float THETA[4] /*degrees*/);
 
 #endif

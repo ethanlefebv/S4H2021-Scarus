@@ -4,6 +4,7 @@ Description: Main code that moves the motors. To be run from the OpenCR.
 Authors: Alec Gagnon,      gaga2120
          Étienne Lefebvre, lefe1001
          Robin Mailhot,    mair1803
+         Charles Caya
 */
 
 // ---------- Libraries ----------
@@ -14,14 +15,14 @@ Authors: Alec Gagnon,      gaga2120
 
 
 // ---------- Enumerations ----------
-enum class State { Sleep, Wait, Parse, Moving};
+enum class State { Sleep, Wait, Parse, Moving };
 
 
 // ---------- Constants ----------
 // --- Motors ---
 const uint8_t ID_MOTOR_1 = 1;
 const uint8_t ID_MOTOR_2 = 2;
-const uint8_t VERRIN_PIN = 22; //51; // GPIO 4
+const uint8_t LINEAR_SOLENOID_PIN = 22; //51; // GPIO 4
 const uint8_t SOLENOID_PIN = 23; //53; // GPIO 6
 
 
@@ -84,7 +85,7 @@ void run_demo()
     inverse_kinematics(x, y, current_angles);
     send_data("OpenCR: Angles : " + String((int)current_angles[0]) + ", " + String((int)current_angles[1]));
 
-    // move the motors to the wanted angles
+    // move the motors to the desired angles
     dyna_workbench.goalPosition(ID_MOTOR_1, (int32_t)2095);//current_angles[0]);
     dyna_workbench.goalPosition(ID_MOTOR_2, (int32_t)2095);//current_angles[1]);
     send_data("OpenCR: Moved motors.");
@@ -92,24 +93,55 @@ void run_demo()
     current_state = State::Wait;
 }
 
+int32_t DegreesToInt(const float angle)
+{
+  return (int32_t)(4095*angle/360);
+}
+
+void run_test()
+{
+  start_motors();
+  dyna_workbench.goalPosition(ID_MOTOR_1, (int32_t)2047);
+  dyna_workbench.goalPosition(ID_MOTOR_2, (int32_t)2047);
+  
+  float angles[4] = {180, 180, 161, 199};
+  inverse_kinematics(0.105f, 0.505f, angles);
+  delay(1000);
+  dyna_workbench.goalPosition(ID_MOTOR_1, DegreesToInt(angles[1]));
+  dyna_workbench.goalPosition(ID_MOTOR_2, DegreesToInt(angles[0]));
+
+  inverse_kinematics(0.105f, 0.40f, angles);
+  delay(1000);
+  dyna_workbench.goalPosition(ID_MOTOR_1, DegreesToInt(angles[1]));
+  dyna_workbench.goalPosition(ID_MOTOR_2, DegreesToInt(angles[0]));
+
+  inverse_kinematics(0.20f, 0.40f, angles);
+  delay(1000);
+  dyna_workbench.goalPosition(ID_MOTOR_1, DegreesToInt(angles[1]));
+  dyna_workbench.goalPosition(ID_MOTOR_2, DegreesToInt(angles[0]));
+
+  delay(1000);
+  stop_motors();
+}
+
 
 void pick()
 {
 	send_data("I received: " + msg + ", which converts to: " + nut_to_string(current_nut));
-	digitalWrite(VERRIN_PIN, HIGH);
+	digitalWrite(LINEAR_SOLENOID_PIN, HIGH);
 	digitalWrite(SOLENOID_PIN, LOW);
 	delay(10000);
-	digitalWrite(VERRIN_PIN, LOW);
+	digitalWrite(LINEAR_SOLENOID_PIN, LOW);
 	digitalWrite(SOLENOID_PIN, HIGH);
 	dyna_workbench.goalPosition(ID_MOTOR_1, (int32_t)2095);//current_angles[0]);
 	dyna_workbench.goalPosition(ID_MOTOR_2, (int32_t)2095);//current_angles[1]);
 	delay(10000);
-	digitalWrite(VERRIN_PIN, HIGH);
+	digitalWrite(LINEAR_SOLENOID_PIN, HIGH);
 	digitalWrite(SOLENOID_PIN, LOW);
 	dyna_workbench.goalPosition(ID_MOTOR_1, (int32_t)1000);
 	dyna_workbench.goalPosition(ID_MOTOR_2, (int32_t)1000);
 	delay(10000);
-	digitalWrite(VERRIN_PIN, LOW);
+	digitalWrite(LINEAR_SOLENOID_PIN, LOW);
 	digitalWrite(SOLENOID_PIN, HIGH);
 }
 
@@ -160,8 +192,9 @@ void setup()
   
     init_motor(ID_MOTOR_1);
     init_motor(ID_MOTOR_2);
-    pinMode(VERRIN_PIN, OUTPUT); // pin 4
+    pinMode(LINEAR_SOLENOID_PIN, OUTPUT); // pin 4
     pinMode(SOLENOID_PIN, OUTPUT); // pin 6
+    //run_test();
 }
 
 void loop()

@@ -73,8 +73,8 @@ void inverse_kinematics(float x, float y, float THETA[4])
         }
     }
 
-    THETA[0] = (atan2(sin(THETA[0]),cos(THETA[0])))*180/M_PI;
-    THETA[1] = (atan2(sin(THETA[1]),cos(THETA[1])))*180/M_PI;
-    THETA[2] = (atan2(sin(THETA[2]),cos(THETA[2])))*180/M_PI;
-    THETA[3] = (atan2(sin(THETA[3]),cos(THETA[3])))*180/M_PI;
+    THETA[0] = (atan2(sin(THETA[0]),cos(THETA[0])))*180/M_PI+180;
+    THETA[1] = (atan2(sin(THETA[1]),cos(THETA[1])))*180/M_PI+180;
+    THETA[2] = (atan2(sin(THETA[2]),cos(THETA[2])))*180/M_PI+180;
+    THETA[3] = (atan2(sin(THETA[3]),cos(THETA[3])))*180/M_PI+180;
 }
