@@ -12,6 +12,7 @@ def init_sequence():
     init_opencr(ser)
     return cam, port, ser
 
+
 def init_parse():
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', required=True, type=int, help='Index of the camera.')
@@ -21,9 +22,11 @@ def init_parse():
     port = args.p
     return camera_index, port
 
+
 def init_camera(camera_index):
     camera = cv2.VideoCapture(camera_index)
     return camera
+
 
 def init_port(port, baudrate):
     print("Opening Serial communication with {0}.".format(port))
@@ -31,12 +34,17 @@ def init_port(port, baudrate):
     ser.flush()
     return ser
 
+
 def init_opencr(ser):
     msg = get_data(ser)
-    #TODO verify the OpenCR is waiting to start
+    # Confirm the OpenCR is waiting to start
+    if msg != "Waiting for the START command.":
+        raise SerialError("The OpenCR is not waiting to start. Try restarting it.")
+
     print_sent_data(send_data(ser, "START"))
-    data = wait_for_data(ser, "Starting the program.")  # Need further research, maybe the way we communicate is not
-                                                        # the best.
+    data = wait_for_data(ser, "Starting the program.")
+
+
 def stop_sequence(cam, port, ser):
     print_sent_data(send_data(ser, "STOP"))
     print_received_data(get_data(ser))

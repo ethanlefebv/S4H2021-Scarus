@@ -13,7 +13,8 @@ def get_inference_nut(cam, model_path):
     y = first_nut[1]
     nut_class = int(first_nut[2])
     print('Yolo model outputs : ', x, y, nut_class)
-    return first_nut
+    return x, y, nut_class
+
 
 def timed_inference(input_image, model_path):
     start_time = time.time()
@@ -21,6 +22,7 @@ def timed_inference(input_image, model_path):
     inf_time = time.time() - start_time
     print("Time spent in inference : {0}".format(inf_time))
     return nuts_list
+
 
 def inference(input_image, model_path):
     if isinstance(input_image, str):
@@ -35,6 +37,7 @@ def inference(input_image, model_path):
     # show_marked_image(image_data,output) # Uncomment if you want to see the image with predictions
     # print(output)
     return output
+    
 
 def load_image(camera=None, input_size=416, image_path='camera',crop=True):
     """
