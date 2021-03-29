@@ -51,6 +51,32 @@ void parse_msg();
 
 // ---------- Function definitions ----------
 // --- Motors ---
+int32_t degrees_to_int(const float angle)
+{
+    return (int32_t)(4095*(angle+180)/360);
+}
+
+bool wait_for_motion(float angle0, float angle1)
+{
+  for(int i = 0; i < 100; ++i)
+  {
+    int32_t pos1;
+    int32_t pos2;
+    dyna_workbench.getPresentPositionData(ID_MOTOR_1, &pos1);
+    dyna_workbench.getPresentPositionData(ID_MOTOR_2, &pos2);
+    Serial.println("-----");
+    Serial.println(degrees_to_int(angle0));
+    Serial.println(pos1);
+    Serial.println(degrees_to_int(angle1));
+    Serial.println(pos2);
+    if(abs(degrees_to_int(angle0)-pos1) < 3 && abs(degrees_to_int(angle1)-pos2) < 3)
+    {
+      break;
+    }
+    delay(10);
+  }
+}
+
 void init_motor(uint8_t motor_ID)
 {
     const char* motor_name = "";
@@ -59,7 +85,8 @@ void init_motor(uint8_t motor_ID)
     dyna_workbench.init(motor_name, 57600, &error_message);
     dyna_workbench.ping(motor_ID, &model_number, &error_message);
     dyna_workbench.jointMode(motor_ID, 0, 0, &error_message);
-    dyna_workbench.torqueOff(motor_ID, &error_message);
+    dyna_workbench.torqueOn(motor_ID);
+    dyna_workbench.goalPosition(motor_ID, (int32_t)2047);
 }
 
 void start_motors()
@@ -93,34 +120,65 @@ void run_demo()
     current_state = State::Wait;
 }
 
-int32_t DegreesToInt(const float angle)
-{
-  return (int32_t)(4095*angle/360);
-}
-
 void run_test()
 {
   start_motors();
-  dyna_workbench.goalPosition(ID_MOTOR_1, (int32_t)2047);
-  dyna_workbench.goalPosition(ID_MOTOR_2, (int32_t)2047);
   
-  float angles[4] = {180, 180, 161, 199};
-  inverse_kinematics(0.105f, 0.505f, angles);
-  delay(1000);
-  dyna_workbench.goalPosition(ID_MOTOR_1, DegreesToInt(angles[1]));
-  dyna_workbench.goalPosition(ID_MOTOR_2, DegreesToInt(angles[0]));
+  float angles[4] = {10, -10, -27, 27};
+  dyna_workbench.goalPosition(ID_MOTOR_1, degrees_to_int(angles[0]));
+  dyna_workbench.goalPosition(ID_MOTOR_2, degrees_to_int(angles[1]));
+  wait_for_motion(angles[0], angles[1]);
+  
+  inverse_kinematics(0.105f, 0.46f, angles);
+  Serial.println("-----");
+  Serial.println(degrees_to_int(angles[0]));
+  Serial.println(angles[0]);
+  Serial.println(degrees_to_int(angles[1]));
+  Serial.println(angles[1]);
+  dyna_workbench.goalPosition(ID_MOTOR_1, degrees_to_int(angles[0]));
+  dyna_workbench.goalPosition(ID_MOTOR_2, degrees_to_int(angles[1]));
+  wait_for_motion(angles[0], angles[1]);
 
-  inverse_kinematics(0.105f, 0.40f, angles);
-  delay(1000);
-  dyna_workbench.goalPosition(ID_MOTOR_1, DegreesToInt(angles[1]));
-  dyna_workbench.goalPosition(ID_MOTOR_2, DegreesToInt(angles[0]));
+  inverse_kinematics(0.105f, 0.20f, angles);
+  Serial.println("-----");
+  Serial.println(degrees_to_int(angles[0]));
+  Serial.println(angles[0]);
+  Serial.println(degrees_to_int(angles[1]));
+  Serial.println(angles[1]);
+  dyna_workbench.goalPosition(ID_MOTOR_1, degrees_to_int(angles[0]));
+  dyna_workbench.goalPosition(ID_MOTOR_2, degrees_to_int(angles[1]));
+  wait_for_motion(angles[0], angles[1]);
 
-  inverse_kinematics(0.20f, 0.40f, angles);
-  delay(1000);
-  dyna_workbench.goalPosition(ID_MOTOR_1, DegreesToInt(angles[1]));
-  dyna_workbench.goalPosition(ID_MOTOR_2, DegreesToInt(angles[0]));
+  inverse_kinematics(0.40f, 0.20f, angles);
+  Serial.println("-----");
+  Serial.println(degrees_to_int(angles[0]));
+  Serial.println(angles[0]);
+  Serial.println(degrees_to_int(angles[1]));
+  Serial.println(angles[1]);
+  dyna_workbench.goalPosition(ID_MOTOR_1, degrees_to_int(angles[0]));
+  dyna_workbench.goalPosition(ID_MOTOR_2, degrees_to_int(angles[1]));
+  wait_for_motion(angles[0], angles[1]);
 
-  delay(1000);
+  inverse_kinematics(0.105f, 0.20f, angles);
+  Serial.println("-----");
+  Serial.println(degrees_to_int(angles[0]));
+  Serial.println(angles[0]);
+  Serial.println(degrees_to_int(angles[1]));
+  Serial.println(angles[1]);
+  dyna_workbench.goalPosition(ID_MOTOR_1, degrees_to_int(angles[0]));
+  dyna_workbench.goalPosition(ID_MOTOR_2, degrees_to_int(angles[1]));
+  wait_for_motion(angles[0], angles[1]);
+
+  inverse_kinematics(-0.20f, 0.20f, angles);
+  Serial.println("-----");
+  Serial.println(degrees_to_int(angles[0]));
+  Serial.println(angles[0]);
+  Serial.println(degrees_to_int(angles[1]));
+  Serial.println(angles[1]);
+  dyna_workbench.goalPosition(ID_MOTOR_1, degrees_to_int(angles[0]));
+  dyna_workbench.goalPosition(ID_MOTOR_2, degrees_to_int(angles[1]));
+  wait_for_motion(angles[0], angles[1]);
+
   stop_motors();
 }
 
@@ -194,7 +252,6 @@ void setup()
     init_motor(ID_MOTOR_2);
     pinMode(LINEAR_SOLENOID_PIN, OUTPUT); // pin 4
     pinMode(SOLENOID_PIN, OUTPUT); // pin 6
-    //run_test();
 }
 
 void loop()
@@ -223,7 +280,7 @@ void loop()
             break;
 
         case State::Moving:
-            //run_demo();
+            run_test();
             //pick();
             delay(1000);
             //send_data("Done");
