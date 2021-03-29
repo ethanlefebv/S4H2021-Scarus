@@ -74,54 +74,33 @@ void stop_motors()
     dyna_workbench.torqueOff(ID_MOTOR_2);
 }
 
-void run_demo()
-{
-    float x = 0.096; //current_nut.coord.X / 1000.0f;
-    float y = 0.462; //current_nut.coord.Y / 1000.0f;
-    send_data("I received: " + msg + ", which converts to: " + nut_to_string(current_nut));
-
-    // send the coordinates to the inverse_kinematics functions to get angles
-    float current_angles[4] = {80.0, 80.0, -130.0, 150.0};
-    inverse_kinematics(x, y, current_angles);
-    send_data("OpenCR: Angles : " + String((int)current_angles[0]) + ", " + String((int)current_angles[1]));
-
-    // move the motors to the desired angles
-    dyna_workbench.goalPosition(ID_MOTOR_1, (int32_t)2095);//current_angles[0]);
-    dyna_workbench.goalPosition(ID_MOTOR_2, (int32_t)2095);//current_angles[1]);
-    send_data("OpenCR: Moved motors.");
-
-    current_state = State::Wait;
-}
-
 int32_t DegreesToInt(const float angle)
 {
-  return (int32_t)(4095*angle/360);
+    return (int32_t)(4095*angle/360);
 }
 
 void run_test()
 {
-  start_motors();
-  dyna_workbench.goalPosition(ID_MOTOR_1, (int32_t)2047);
-  dyna_workbench.goalPosition(ID_MOTOR_2, (int32_t)2047);
-  
-  float angles[4] = {180, 180, 161, 199};
-  inverse_kinematics(0.105f, 0.505f, angles);
-  delay(1000);
-  dyna_workbench.goalPosition(ID_MOTOR_1, DegreesToInt(angles[1]));
-  dyna_workbench.goalPosition(ID_MOTOR_2, DegreesToInt(angles[0]));
+    dyna_workbench.goalPosition(ID_MOTOR_1, (int32_t)2047);
+    dyna_workbench.goalPosition(ID_MOTOR_2, (int32_t)2047);
 
-  inverse_kinematics(0.105f, 0.40f, angles);
-  delay(1000);
-  dyna_workbench.goalPosition(ID_MOTOR_1, DegreesToInt(angles[1]));
-  dyna_workbench.goalPosition(ID_MOTOR_2, DegreesToInt(angles[0]));
+    float angles[4] = {180, 180, 161, 199};
+    inverse_kinematics(0.105f, 0.505f, angles);
+    delay(1000);
+    dyna_workbench.goalPosition(ID_MOTOR_1, DegreesToInt(angles[1]));
+    dyna_workbench.goalPosition(ID_MOTOR_2, DegreesToInt(angles[0]));
 
-  inverse_kinematics(0.20f, 0.40f, angles);
-  delay(1000);
-  dyna_workbench.goalPosition(ID_MOTOR_1, DegreesToInt(angles[1]));
-  dyna_workbench.goalPosition(ID_MOTOR_2, DegreesToInt(angles[0]));
+    inverse_kinematics(0.105f, 0.40f, angles);
+    delay(1000);
+    dyna_workbench.goalPosition(ID_MOTOR_1, DegreesToInt(angles[1]));
+    dyna_workbench.goalPosition(ID_MOTOR_2, DegreesToInt(angles[0]));
 
-  delay(1000);
-  stop_motors();
+    inverse_kinematics(0.20f, 0.40f, angles);
+    delay(1000);
+    dyna_workbench.goalPosition(ID_MOTOR_1, DegreesToInt(angles[1]));
+    dyna_workbench.goalPosition(ID_MOTOR_2, DegreesToInt(angles[0]));
+
+    delay(1000);
 }
 
 
@@ -171,7 +150,7 @@ void check_for_stop()
 void parse_msg()
 {
     Nut nut = parse_nut(msg);
-    if (nut.coord.X != 9999 && nut.coord.Y != 9999 && nut.type != 9)
+    if (nut.coord.X != INVALID_COORD && nut.coord.Y != INVALID_COORD && nut.type != INVALID_NUT_TYPE)
     {
         current_nut = nut;
         current_state = State::Moving;
@@ -223,7 +202,7 @@ void loop()
             break;
 
         case State::Moving:
-            //run_demo();
+            run_test();
             //pick();
             delay(1000);
             //send_data("Done");

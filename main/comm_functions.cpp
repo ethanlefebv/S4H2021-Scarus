@@ -26,7 +26,7 @@ String get_data()
 
 /// Parse a coordinate from a String.
 /// Return the coordinate if it was valid, else
-/// return (9999,9999).
+/// return the INVALID coord.
 Coord parse_coord(const String& data)
 {
     Coord coord;
@@ -40,8 +40,8 @@ Coord parse_coord(const String& data)
     }
     else
     {
-        coord.X = 9999;
-        coord.Y = 9999;
+        coord.X = INVALID_COORD;
+        coord.Y = INVALID_COORD;
     }
     return coord;
 }
@@ -60,7 +60,7 @@ Nut parse_nut(const String& data)
     }
     else
     {
-        nut.type = 9;
+        nut.type = INVALID_NUT_TYPE;
         nut.coord = parse_coord("");
     }
     return nut;

@@ -3,8 +3,6 @@ from Communication.serial_functions.functions import *
 from init_stop.init_stop_sequences import *
 #from init_stop.init_stop_sequences_test import *
 
-#encoding = "utf-8"
-#baudrate = 115200
 
 if __name__ == '__main__':
     try:

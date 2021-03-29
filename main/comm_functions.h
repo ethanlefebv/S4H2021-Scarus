@@ -3,6 +3,9 @@
 #ifndef comm_functions_h
 #define comm_functions_h
 
+const int INVALID_COORD = 9999;
+const int INVALID_NUT_TYPE = -1;
+
 struct Coord
 {
     int X;
@@ -22,7 +25,7 @@ String get_data();
 
 /// Parse a coordinate from a String.
 /// Return the coordinate if it was valid, else
-/// return (9999,9999).
+/// return the INVALID coord.
 Coord parse_coord(const String& data);
 
 /// Parse and return a Nut from a String.
