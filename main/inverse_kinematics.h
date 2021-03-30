@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #ifndef inverse_kinematics_h
 #define inverse_kinematics_h
 

@@ -1,7 +1,7 @@
-#include <Arduino.h>
-
 #ifndef comm_functions_h
 #define comm_functions_h
+
+class String;
 
 struct Coord
 {
@@ -36,5 +36,11 @@ String send_data(const String& data);
 String coord_to_string(const Coord& coord);
 
 String nut_to_string(const Nut& nut);
+
+bool check_for_start(String& msg);
+
+bool check_for_stop(const String& msg);
+
+int parse_msg(const String& msg, Nut& nut);
 
 #endif

@@ -1,5 +1,5 @@
-#include <Arduino.h>
 #include "comm_functions.h"
+#include <Arduino.h>
 
 const char ID = '1';
 
@@ -84,4 +84,40 @@ String coord_to_string(const Coord& coord)
 String nut_to_string(const Nut& nut)
 {
     return "Type:" + String(nut.type) + ", " + coord_to_string(nut.coord);
+}
+
+bool check_for_start(String& msg)
+{
+    msg = get_data();
+    if (msg == "START")
+    {
+        send_data("Starting the program.");
+        return true;
+    }
+    return false;
+}
+
+bool check_for_stop(const String& msg)
+{
+    if (msg == "STOP")
+    {
+        send_data("Stopping the program.");
+        
+        return true;
+    }
+    return false;
+}
+
+int parse_msg(const String& msg, Nut& nut)
+{
+    nut = parse_nut(msg);
+    if (nut.coord.X != 9999 && nut.coord.Y != 9999 && nut.type != 9)
+    {
+        return 1;
+    }
+    else if(check_for_stop(msg))
+    {
+        return 0;
+    }
+    return 2;  
 }
