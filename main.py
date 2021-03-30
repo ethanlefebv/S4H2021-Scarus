@@ -12,7 +12,10 @@ if __name__ == '__main__':
         #cam, port, ser = init_fake_sequence()
         
         #while True:
-        nut_x, nut_y, nut_class = get_inference_nut(cam, model_path)
+        nut = coord_cam_to_robot(get_inference_nut(cam, model_path))
+        nut_x = nut[0]
+        nut_y = nut[1]
+        nut_class = nut[2]
         if nut_class != -1:
             print_sent_data(send_data(ser, nut_to_string(nut_x, nut_y, nut_class)))
         data = wait_for_data(ser, "Done")

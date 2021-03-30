@@ -3,6 +3,11 @@ import numpy as np
 from tflite_runtime.interpreter import Interpreter
 import time
 
+def coord_cam_to_robot(nut):
+    nut[0] = 0.193*nut[0]/416+0.008 //x
+    nut[1] = -0.199*nut[1]/416+0.477 //y
+    return nut
+
 def get_inference_nut(cam, model_path):
     nuts_list = timed_inference(cam, model_path)
     if nuts_list == []:
@@ -13,7 +18,7 @@ def get_inference_nut(cam, model_path):
     y = first_nut[1]
     nut_class = int(first_nut[2])
     print('Yolo model outputs : ', x, y, nut_class)
-    return x, y, nut_class
+    return first_nut
 
 
 def timed_inference(input_image, model_path):
