@@ -3,8 +3,6 @@ from Communication.serial_functions.functions import *
 from init_stop.init_stop_sequences import *
 #from init_stop.init_stop_sequences_test import *
 
-#encoding = "utf-8"
-#baudrate = 115200
 
 if __name__ == '__main__':
     try:
@@ -14,14 +12,16 @@ if __name__ == '__main__':
         #cam, port, ser = init_fake_sequence()
         
         #while True:
-        nut = get_inference_nut(cam, model_path)
-        if nut[2] != -1:
-            print_sent_data(send_data(ser, nut_to_string(x, y, nut_class)))
-        data = wait_for_data(ser, "")
+        nut_x, nut_y, nut_class = get_inference_nut(cam, model_path)
+        if nut_class != -1:
+            print_sent_data(send_data(ser, nut_to_string(nut_x, nut_y, nut_class)))
+        data = wait_for_data(ser, "Done")
         #endWhile
-
-        stop_sequence(cam, port, ser)
 
     except KeyboardInterrupt:
         print('Program stopped by user.')
-        stop_sequence(cam, ser, port)
+        
+    except SerialError as se:
+        print(se)
+        
+    stop_sequence(cam, port, ser)

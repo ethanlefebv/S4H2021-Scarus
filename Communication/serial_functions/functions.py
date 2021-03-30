@@ -5,6 +5,11 @@ encoding = "utf-8"
 baudrate = 115200
 ID = '0'
 
+class SerialError(Exception):
+    """ Raised when an error occurs with the OpenCR. """
+    pass
+
+
 def print_received_data(data):
     print("Received : '{0}'\n".format(data))
 
@@ -59,9 +64,15 @@ def nut_to_string(x, y, type):
     """
     return "{0}/{1}".format(type, coord_to_string(x, y))
 
-def wait_for_data(ser, check):
+
+def wait_for_data(ser, wanted):
+    """ Wait in this function until a wanted string is read.
+
+    This function doesn't currently really wait. It will have to be modified
+    to work.
+    """
     data = None
-    #while data != check:
+    #while data != wanted:
     time.sleep(0.1)
     data = get_data(ser)
     print_received_data(data)
