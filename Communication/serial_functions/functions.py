@@ -44,6 +44,17 @@ def send_data(ser, data):
     ser.write(message.encode(encoding))
     return message
 
+def send_start(ser):
+    message = "START"
+    send_data(ser, message)
+    return message
+
+def send_stop(ser):
+    message = "STOP"
+    send_data(ser, message)
+    return message
+
+
 
 def coord_to_string(x, y):
     """Convert a 2D coordinate to a string.

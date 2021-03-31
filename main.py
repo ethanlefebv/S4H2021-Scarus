@@ -1,7 +1,5 @@
 from Computer_Vision.inference_pipeline import *
-from Communication.serial_functions.functions import *
 from init_stop.init_stop_sequences import *
-#from init_stop.init_stop_sequences_test import *
 
 
 if __name__ == '__main__':
@@ -26,5 +24,5 @@ if __name__ == '__main__':
         
     except SerialError as se:
         print(se)
-        
+
     stop_sequence(cam, port, ser)

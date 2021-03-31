@@ -6,6 +6,7 @@ import time
 def coord_cam_to_robot(nut):
     nut[0] = int(193*nut[0]/416+8) #x in mm
     nut[1] = int(-199*nut[1]/416+477) #y in mm
+    nut[2] = int(nut[2])
     return nut
 
 def get_inference_nut(cam, model_path):
