@@ -48,7 +48,7 @@ def send_data(ser, data):
 def coord_to_string(x, y):
     """Convert a 2D coordinate to a string.
 
-    Insert '|' between the coordinates to simplify the
+    Insert '/' between the coordinates to simplify the
     split operation when decoding.
     Return the string.
     """
