@@ -6,12 +6,6 @@ const int INVALID_COORD = 9999;
 const int INVALID_NUT_TYPE = -1;
 const int INVALID_INPUT = -9999;
 
-//struct Coord
-//{
-//    int X;
-//    int Y;
-//};
-
 struct Coord
 {
     float x;
@@ -34,7 +28,9 @@ String get_data();
 ///// return the INVALID coord.
 //Coord parse_coord(const String& data);
 
-String parse_data(const String& data, int& intData);
+/// Parse an int from a String.
+/// Return the read value with the param int_data.
+String parse_data(const String& data, int& int_data);
 
 /// Parse and return a Nut from a String.
 Nut parse_nut(const String& data);
