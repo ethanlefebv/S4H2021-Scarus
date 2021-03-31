@@ -4,8 +4,8 @@ from tflite_runtime.interpreter import Interpreter
 import time
 
 def coord_cam_to_robot(nut):
-    nut[0] = int(193*nut[0]/416+8) #x in mm
-    nut[1] = int(-199*nut[1]/416+477) #y in mm
+    nut[0] = int(193*nut[0]/416+8-8) #x in mm
+    nut[1] = int(-199*nut[1]/416+477-32) #y in mm
     nut[2] = int(nut[2])
     return nut
 

@@ -84,14 +84,15 @@ void loop()
         {
         	  // checks for start, stop and sets nut values
             Nut nut;
-            int parseRes = parse_msg(msg, nut);
-            if(parseRes == 1)
+            int parse_res = parse_msg(msg, nut);
+            // TODO: take out parse_nut from parse_msg
+            if(parse_res == 1)
             {
                 current_state = State::Moving;
                 current_nut = nut;
             }
             
-            if(parseRes == 0)
+            if(parse_res == 0)
             {
                 current_state = State::Sleep;
             }
@@ -115,8 +116,7 @@ void loop()
 //            Serial.println(motorAngles[1], 3);
             
             move_to_pos_wait(dyna_workbench, MOTOR_IDS, motorAngles);
-            delay(1000);
-            //send_data("Done");
+            send_data("Done");
             current_state = State::Wait;
             break;
         }

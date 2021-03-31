@@ -19,10 +19,11 @@ if __name__ == '__main__':
         data = wait_for_data(ser, "Done")
         #endWhile
 
+        stop_sequence(cam, port, ser)
+
     except KeyboardInterrupt:
         print('Program stopped by user.')
+        stop_sequence(cam, port, ser)
         
     except SerialError as se:
         print(se)
-
-    stop_sequence(cam, port, ser)

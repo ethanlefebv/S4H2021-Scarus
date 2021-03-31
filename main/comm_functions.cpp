@@ -40,7 +40,7 @@ String parse_data(const String& data, int& int_data)
     }
     else
     {
-        send_data("Error: Communication");
+        //Serial.println("Error: Communication");
         int_data = INVALID_INPUT;
         output = "Error";
     }
@@ -114,6 +114,7 @@ bool check_for_stop(const String& msg)
     return stop;
 }
 
+// TODO: take out parse_nut from parse_msg
 int parse_msg(const String& msg, Nut& nut)
 {
     int result = 2;
