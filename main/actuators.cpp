@@ -22,8 +22,7 @@ bool move_to_pos_wait(DynamixelWorkbench& motor, const std::vector<uint8_t>& mot
     for(int i = 0; i < 100; ++i)
     {
         move_to_pos(motor, motor_IDs, angles);
-        
-        Serial.println("-----");    
+         
         std::vector<int32_t> vPos;
         vPos.reserve(motor_IDs.size());
         
@@ -31,9 +30,6 @@ bool move_to_pos_wait(DynamixelWorkbench& motor, const std::vector<uint8_t>& mot
         for(size_t j = 0; j < motor_IDs.size(); ++j)
         {
             motor.getPresentPositionData(motor_IDs[j], &vPos[j]);
-
-            Serial.println(degrees_to_int(angles[j]));
-            Serial.println(vPos[j]);
             
             if(abs(degrees_to_int(angles[j])-vPos[j]) < 3)
             {
@@ -49,7 +45,7 @@ bool move_to_pos_wait(DynamixelWorkbench& motor, const std::vector<uint8_t>& mot
     }
 }
 
-void init_motor(DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_IDs)
+void init_motor(DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_IDs, float motorAngles[4])
 {
     for(const auto motor_ID : motor_IDs)
     {
@@ -61,8 +57,17 @@ void init_motor(DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_IDs
         motor.jointMode(motor_ID, 0, 0, &error_message);
         motor.torqueOn(motor_ID);
     }
-    float angles[4] = {10.0f, -10.0f, -27.0f, 27.0f};
-    move_to_pos_wait(motor, motor_IDs, angles);
+
+    go_to_home(motor, motor_IDs, motorAngles);
+}
+
+void go_to_home(DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_IDs, float motorAngles[4])
+{
+    for(int i = 0; i < sizeof(HOEMANGLES)/sizeof(HOEMANGLES[0]); ++i)
+    {
+        motorAngles[i] = HOEMANGLES[i];
+    }
+    move_to_pos_wait(motor, motor_IDs, motorAngles);
 }
 
 void start_motors(DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_IDs)

@@ -4,11 +4,18 @@
 class String;
 const int INVALID_COORD = 9999;
 const int INVALID_NUT_TYPE = -1;
+const int INVALID_INPUT = -9999;
+
+//struct Coord
+//{
+//    int X;
+//    int Y;
+//};
 
 struct Coord
 {
-    int X;
-    int Y;
+    float x;
+    float y;
 };
 
 struct Nut
@@ -22,10 +29,12 @@ struct Nut
 /// Return the received data.
 String get_data();
 
-/// Parse a coordinate from a String.
-/// Return the coordinate if it was valid, else
-/// return the INVALID coord.
-Coord parse_coord(const String& data);
+///// Parse a coordinate from a String.
+///// Return the coordinate if it was valid, else
+///// return the INVALID coord.
+//Coord parse_coord(const String& data);
+
+String parse_data(const String& data, int& intData);
 
 /// Parse and return a Nut from a String.
 Nut parse_nut(const String& data);

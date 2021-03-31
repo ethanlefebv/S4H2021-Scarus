@@ -37,6 +37,7 @@ DynamixelWorkbench dyna_workbench;
 State current_state = State::Sleep;
 String msg = String();
 Nut current_nut;
+float motorAngles[4];
 
 
 // ---------- Main functions ----------
@@ -45,7 +46,7 @@ void setup()
     const int BAUDRATE = 115200;  
     Serial.begin(BAUDRATE);
   
-    init_motor(dyna_workbench, MOTOR_IDS);
+    init_motor(dyna_workbench, MOTOR_IDS, motorAngles);
     pinMode(LINEAR_SOLENOID_PIN, OUTPUT); // pin 4
     pinMode(SOLENOID_PIN, OUTPUT); // pin 6
 }
@@ -61,8 +62,9 @@ void loop()
             delay(100);
             if(check_for_start(msg))
             {
-              start_motors(dyna_workbench, MOTOR_IDS);
-              current_state = State::Wait;
+                start_motors(dyna_workbench, MOTOR_IDS);
+                go_to_home(dyna_workbench, MOTOR_IDS, motorAngles);
+                current_state = State::Wait;
             }
             break;
         }
@@ -91,15 +93,28 @@ void loop()
             
             if(parseRes == 0)
             {
-              current_state = State::Sleep;
+                current_state = State::Sleep;
             }
             break;
         }
 
         case State::Moving:
         {
-            run_test(dyna_workbench, MOTOR_IDS);
-            //pick();
+            //run_test(dyna_workbench, MOTOR_IDS);
+            //pick();     
+            
+            Serial.println("-----");
+            Serial.println(current_nut.coord.x, 3);
+            Serial.println(current_nut.coord.y, 3);
+            Serial.println(current_nut.type);
+            
+            inverse_kinematics(current_nut.coord.x, current_nut.coord.y, motorAngles); // From 0.008f/0.278f to 0.201f/0.477f
+            
+            Serial.println("------");
+            Serial.println(motorAngles[0], 3);
+            Serial.println(motorAngles[1], 3);
+            
+            move_to_pos_wait(dyna_workbench, MOTOR_IDS, motorAngles);
             delay(1000);
             //send_data("Done");
             current_state = State::Wait;

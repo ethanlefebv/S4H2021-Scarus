@@ -86,18 +86,19 @@ void inverse_kinematics(float x, float y, float THETA[4])
         if(THETA[0]-THETA[1] < -48)
         {
             Serial.println("Error: Collision avoided");
-            THETA[0] = 10;
-            THETA[1] = -10;
-            THETA[2] = -27;
-            THETA[3] = 27;
+
+            for(int i = 0; i < sizeof(HOEMANGLES)/sizeof(HOEMANGLES[0]); ++i)
+            {
+                THETA[i] = HOEMANGLES[i];
+            }
         }
     }
     else
     {
         Serial.println("Error: Unattainable angles");
-        THETA[0] = 10;
-        THETA[1] = -10;
-        THETA[2] = -27;
-        THETA[3] = 27;
+            for(int i = 0; i < sizeof(HOEMANGLES)/sizeof(HOEMANGLES[0]); ++i)
+            {
+                THETA[i] = HOEMANGLES[i];
+            }
     }
 }

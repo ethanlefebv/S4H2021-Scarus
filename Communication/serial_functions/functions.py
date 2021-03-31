@@ -52,7 +52,7 @@ def coord_to_string(x, y):
     split operation when decoding.
     Return the string.
     """
-    return "{0}|{1}".format(x, y)
+    return "{0}/{1}".format(x, y)
 
 
 def nut_to_string(x, y, type):
@@ -62,7 +62,7 @@ def nut_to_string(x, y, type):
     the split operation when decoding.
     Return the string.
     """
-    return "{0}/{1}".format(type, coord_to_string(x, y))
+    return "/{0}/{1}/".format(coord_to_string(x, y), type)
 
 
 def wait_for_data(ser, wanted):
