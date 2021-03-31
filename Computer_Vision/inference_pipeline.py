@@ -9,6 +9,7 @@ def get_inference_nut(cam, model_path):
         nuts_list = [[0, 0, -1]]
 
     first_nut = nuts_list[0]
+
     x = first_nut[0]
     y = first_nut[1]
     nut_class = int(first_nut[2])
@@ -19,6 +20,7 @@ def get_inference_nut(cam, model_path):
 def timed_inference(input_image, model_path):
     start_time = time.time()
     nuts_list = inference(input_image, model_path)
+    print(nuts_list)
     inf_time = time.time() - start_time
     print("Time spent in inference : {0}".format(inf_time))
     return nuts_list
@@ -34,7 +36,7 @@ def inference(input_image, model_path):
     model_output = model_predict(image_data, interpreter)
     boxes_tensors, confidence_tensors = get_boxes_tensors(model_output[0], model_output[1], threshold=.90)
     output = output_parsing(boxes_tensors, confidence_tensors)
-    # show_marked_image(image_data,output) # Uncomment if you want to see the image with predictions
+    show_marked_image(image_data,output) # Uncomment if you want to see the image with predictions
     # print(output)
     return output
     
@@ -163,6 +165,7 @@ def output_parsing(boxes, confidence):
 
     return output
 
+
 def show_marked_image(image, detected_list):
     """
     :param image: image on which to mark the detected objects
@@ -187,6 +190,7 @@ def show_marked_image(image, detected_list):
             marked_image[y - offset:y + offset, x - offset:x + offset] = [1, 0, 0]
 
         cv2.putText(marked_image, str(object_class), (x-offset, y+offset), font, font_size, font_color, font_thickness, cv2.LINE_AA)
+    cv2.putText(marked_image, "x: "+str(0.193/416*detected_list[0][0])+"  y: "+str(0.199/416*detected_list[0][1]), (50,50), font, font_size, (255,255,255), font_thickness, cv2.LINE_AA)
     cv2.imshow('unmarked',marked_image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
