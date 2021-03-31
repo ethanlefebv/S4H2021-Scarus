@@ -8,15 +8,15 @@ if __name__ == '__main__':
     try:
         model_path = "Computer_Vision/models/yolov4-tiny-416-fp16-nutz.tflite"
         
-        cam, port, ser = init_sequence()
+        cam = init_camera(1)
         #cam, port, ser = init_fake_sequence()
         
         #while True:
-        first nut = get_inference_nut(cam, model_path)
-
+        nut_x, nut_y, nut_class = get_inference_nut(cam, model_path)
         if nut_class != -1:
             print_sent_data(send_data(ser, nut_to_string(nut_x, nut_y, nut_class)))
         data = wait_for_data(ser, "Done")
+        cam.release()
         #endWhile
 
     except KeyboardInterrupt:
