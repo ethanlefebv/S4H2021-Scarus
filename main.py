@@ -11,7 +11,7 @@ if __name__ == '__main__':
         #cam, port, ser = init_fake_sequence()
         
         while True:
-            nut = coord_cam_to_robot(get_inference_nut(cam, model_path))
+            nut = coord_cam_to_robot(get_inference_nut(cam, model_path, False))
             nut_x = nut[0]
             nut_y = nut[1]
             nut_class = nut[2]
