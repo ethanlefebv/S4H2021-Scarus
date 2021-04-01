@@ -44,17 +44,6 @@ def send_data(ser, data):
     ser.write(message.encode(encoding))
     return message
 
-def send_start(ser):
-    message = "START"
-    send_data(ser, message)
-    return message
-
-def send_stop(ser):
-    message = "STOP"
-    send_data(ser, message)
-    return message
-
-
 
 def coord_to_string(x, y):
     """Convert a 2D coordinate to a string.
@@ -83,9 +72,10 @@ def wait_for_data(ser, wanted):
     to work.
     """
     data = None
-    #while data != wanted:
-    time.sleep(0.1)
-    data = get_data(ser)
+    while data != wanted:
+        data = get_data(ser)
+        time.sleep(0.01)
+
     print_received_data(data)
     return data
 
