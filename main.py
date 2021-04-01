@@ -17,7 +17,7 @@ if __name__ == '__main__':
             nut_class = nut[2]
             if nut_class != INVALID_NUT:
                 print_sent_data(send_data(ser, nut_to_string(nut_x, nut_y, nut_class)))
-                data = wait_for_data(ser, "Done")
+                wait_for_data(ser, "Done")
 
         stop_sequence(cam, port, ser)
 

@@ -66,12 +66,9 @@ def nut_to_string(x, y, type):
 
 
 def wait_for_data(ser, wanted):
-    """ Wait in this function until a wanted string is read.
-
-    This function doesn't currently really wait. It will have to be modified
-    to work.
+    """Wait in this function until a wanted string is read.
     """
-    data = None
+    data = get_data(ser)
     while data != wanted:
         data = get_data(ser)
         time.sleep(0.01)
