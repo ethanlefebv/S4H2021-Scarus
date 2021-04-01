@@ -25,8 +25,8 @@ enum class State { Sleep, Wait, Parse, Moving };
 const uint8_t ID_MOTOR_1 = 1;
 const uint8_t ID_MOTOR_2 = 2;
 const std::vector<uint8_t> MOTOR_IDS = { ID_MOTOR_1, ID_MOTOR_2};
-const uint8_t LINEAR_SOLENOID_PIN = 22; //51; // GPIO 4
-const uint8_t SOLENOID_PIN = 23; //53; // GPIO 6
+const uint8_t LINEAR_PIN = 5;
+const uint8_t SOLENOID_PIN = 6;
 
 
 // ---------- Variables ----------
@@ -47,8 +47,8 @@ void setup()
     Serial.begin(BAUDRATE);
   
     init_motor(dyna_workbench, MOTOR_IDS, motor_angles);
-    pinMode(LINEAR_SOLENOID_PIN, OUTPUT); // pin 4
-    pinMode(SOLENOID_PIN, OUTPUT); // pin 6
+    pinMode(LINEAR_PIN, OUTPUT);
+    pinMode(SOLENOID_PIN, OUTPUT);
 }
 
 void loop()
@@ -60,8 +60,10 @@ void loop()
             // Waiting for the signal to start the program
             send_data("Waiting for the START command.");
             delay(100);
-            if(check_for_start(msg))
+            msg = get_data();
+            if(should_start(msg))
             {
+                send_data("Starting the program.");
                 start_motors(dyna_workbench, MOTOR_IDS);
                 go_to_home(dyna_workbench, MOTOR_IDS, motor_angles);
                 current_state = State::Wait;
@@ -82,25 +84,27 @@ void loop()
 
         case State::Parse:
         {
-        	// checks for start, stop and sets nut values
-            Nut nut;
-            int parse_res = parse_msg(msg, nut);
-            // TODO: take out parse_nut from parse_msg
-            if(parse_res == 1)
+        	  // checks for start, stop and sets nut values
+            Nut nut = parse_nut(msg);
+
+            if (nut.is_valid)
             {
                 current_state = State::Moving;
                 current_nut = nut;
             }
-            
-            if(parse_res == 0)
+            else if (should_stop(msg))
             {
+                send_data("Stopping the program.");
                 current_state = State::Sleep;
-            }
+            }         
             break;
         }
 
         case State::Moving:
         {
+            //run_test(dyna_workbench, MOTOR_IDS);
+            //pick();
+            
             //Serial.println("-----");
             //Serial.println(current_nut.coord.x, 3);
             //Serial.println(current_nut.coord.y, 3);
@@ -109,8 +113,8 @@ void loop()
             inverse_kinematics(current_nut.coord.x, current_nut.coord.y, motor_angles);
             
             //Serial.println("------");
-            //Serial.println(motor_angles[0], 3);
-            //Serial.println(motor_angles[1], 3);
+            //Serial.println(motorAngles[0], 3);
+            //Serial.println(motorAngles[1], 3);
             
             move_to_pos_wait(dyna_workbench, MOTOR_IDS, motor_angles);
             send_data("Done");

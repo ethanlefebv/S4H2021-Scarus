@@ -55,20 +55,19 @@ Nut parse_nut(const String& data)
     int nutY;
     parse_data(parse_data(parse_data(data, nutX), nutY), nut.type);
 
-    nut.coord.x = (nutX == INVALID_INPUT) ? INVALID_COORD : nutX / 1000.0;
-    nut.coord.y = (nutY == INVALID_INPUT) ? INVALID_COORD : nutY / 1000.0;
-
-    if (nut.type == INVALID_INPUT)
+    if (nut.type != INVALID_INPUT)
     {
-        nut.type = INVALID_NUT_TYPE;
-    }
+        nut.is_valid = true;
+        nut.coord.x = nutX / 1000.0;
+        nut.coord.y = nutY / 1000.0;
 
-    // Slide bed limit dimensions
-    if (nut.coord.x > 0.180 && nut.coord.x != INVALID_COORD) { nut.coord.x = 0.180; }
-    if (nut.coord.x < 0.015 && nut.coord.x != INVALID_COORD) { nut.coord.x = 0.015; }
-    
-    if (nut.coord.y > 0.430 && nut.coord.y != INVALID_COORD) { nut.coord.y = 0.430; }
-    if (nut.coord.y < 0.250 && nut.coord.y != INVALID_COORD) { nut.coord.y = 0.250; }
+        // Slide bed limit dimensions
+        if (nut.coord.x > 0.180) { nut.coord.x = 0.180; }
+        if (nut.coord.x < 0.015) { nut.coord.x = 0.015; }
+        
+        if (nut.coord.y > 0.430) { nut.coord.y = 0.430; }
+        if (nut.coord.y < 0.250) { nut.coord.y = 0.250; } 
+    }
     
     return nut;
 }
@@ -93,39 +92,12 @@ String nut_to_string(const Nut& nut)
     return "Type:" + String(nut.type) + ", " + coord_to_string(nut.coord);
 }
 
-bool check_for_start(String& msg)
+bool should_start(const String& msg)
 {
-    msg = get_data();
-    bool start = msg == "START";
-    if (start)
-    {
-        send_data("Starting the program.");
-    }
-    return start;
+    return msg == "START";
 }
 
-bool check_for_stop(const String& msg)
+bool should_stop(const String& msg)
 {
-    bool stop = msg == "STOP";
-    if (stop)
-    {
-        send_data("Stopping the program.");
-    }
-    return stop;
-}
-
-// TODO: take out parse_nut from parse_msg
-int parse_msg(const String& msg, Nut& nut)
-{
-    int result = 2;
-    nut = parse_nut(msg);
-    if (nut.coord.x != INVALID_COORD && nut.coord.y != INVALID_COORD && nut.type != INVALID_NUT_TYPE)
-    {
-        result = 1;
-    }
-    else if(check_for_stop(msg))
-    {
-        result = 0;
-    }
-    return result;
+    return msg == "STOP";
 }
