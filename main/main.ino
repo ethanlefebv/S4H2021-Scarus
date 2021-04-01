@@ -14,6 +14,7 @@ Authors: Alec Gagnon,      gaga2120
 #include "comm_functions.h"
 #include "actuators.h"
 #include "inverse_kinematics.h"
+#include "nut.h"
 
 
 // ---------- Enumerations ----------
@@ -102,21 +103,9 @@ void loop()
 
         case State::Moving:
         {
-            //run_test(dyna_workbench, MOTOR_IDS);
-            //pick();
+            go_to_pick(current_nut, dyna_workbench, MOTOR_IDS, motor_angles, LINEAR_PIN, SOLENOID_PIN);
+            go_to_drop(current_nut, dyna_workbench, MOTOR_IDS, motor_angles, LINEAR_PIN, SOLENOID_PIN);
             
-            //Serial.println("-----");
-            //Serial.println(current_nut.coord.x, 3);
-            //Serial.println(current_nut.coord.y, 3);
-            //Serial.println(current_nut.type);
-            
-            inverse_kinematics(current_nut.coord.x, current_nut.coord.y, motor_angles);
-            
-            //Serial.println("------");
-            //Serial.println(motorAngles[0], 3);
-            //Serial.println(motorAngles[1], 3);
-            
-            move_to_pos_wait(dyna_workbench, MOTOR_IDS, motor_angles);
             send_data("Done");
             current_state = State::Wait;
             break;

@@ -2,20 +2,8 @@
 #define comm_functions_h
 
 class String;
-const int INVALID_INPUT = 9999;
-
-struct Coord
-{
-    float x = INVALID_INPUT;
-    float y = INVALID_INPUT;
-};
-
-struct Nut
-{
-    Coord coord;
-    int type = INVALID_INPUT;
-    bool is_valid = false;
-};
+struct Nut;
+struct Coord;
 
 /// Read data from the serial port.
 /// Ignore the message if it was sent by this device.

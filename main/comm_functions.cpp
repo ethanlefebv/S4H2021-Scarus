@@ -1,4 +1,5 @@
 #include "comm_functions.h"
+#include "nut.h"
 #include <Arduino.h>
 
 const char ID = '1';
