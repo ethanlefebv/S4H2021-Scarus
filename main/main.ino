@@ -85,7 +85,7 @@ void loop()
 
         case State::Parse:
         {
-        	  // checks for start, stop and sets nut values
+            // checks for start, stop and sets nut values
             Nut nut = parse_nut(msg);
 
             if (nut.is_valid)

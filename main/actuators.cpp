@@ -5,42 +5,41 @@
 #include <DynamixelWorkbench.h>
 #include <vector>
 
+/// Custom function to convert an angle to a value that can be sent
+/// to the Dynamixel motors.
 int32_t degrees_to_int(const float angle)
 {
     return (int32_t)(4095*(angle+180)/360);
 }
 
+/// Moves the motors to a wanted position.
 void move_to_pos(DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_IDs, float angles[4])
 {
-  for(size_t i = 0; i < motor_IDs.size(); ++i)
-  {
-      motor.goalPosition(motor_IDs[i], degrees_to_int(angles[i]));
-  }
+    for (size_t i = 0; i < motor_IDs.size(); ++i)
+    {
+        motor.goalPosition(motor_IDs[i], degrees_to_int(angles[i]));
+    }
 }
 
+/// Calls move_to_pos and waits until the movements are complete.
 bool move_to_pos_wait(DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_IDs, float angles[4])
 {
-    for(int i = 0; i < 100; ++i)
+    int done_motors = 0;
+    for (int i = 0; i < 100 && done_motors != motor_IDs.size(); ++i)
     {
         move_to_pos(motor, motor_IDs, angles);
          
-        std::vector<int32_t> vPos;
-        vPos.reserve(motor_IDs.size());
+        std::vector<int32_t> v_pos;
+        v_pos.reserve(motor_IDs.size());
         
-        int done_motors = 0;
-        for(size_t j = 0; j < motor_IDs.size(); ++j)
+        for (size_t j = 0; j < motor_IDs.size(); ++j)
         {
-            motor.getPresentPositionData(motor_IDs[j], &vPos[j]);
+            motor.getPresentPositionData(motor_IDs[j], &v_pos[j]);
             
-            if(abs(degrees_to_int(angles[j])-vPos[j]) < 3)
+            if (abs(degrees_to_int(angles[j]) - v_pos[j]) < 3)
             {
                 ++done_motors;
             }
-        }
-        
-        if(done_motors == motor_IDs.size())
-        {
-          break;
         }
         delay(10);
     }
@@ -48,7 +47,7 @@ bool move_to_pos_wait(DynamixelWorkbench& motor, const std::vector<uint8_t>& mot
 
 void init_motor(DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_IDs, float motor_angles[4])
 {
-    for(const auto motor_ID : motor_IDs)
+    for (const auto motor_ID : motor_IDs)
     {
         const char* motor_name = "";
         uint16_t model_number = 0;
@@ -64,7 +63,7 @@ void init_motor(DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_IDs
 
 void go_to_home(DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_IDs, float motor_angles[4])
 {
-    for(int i = 0; i < sizeof(HOMEANGLES)/sizeof(HOMEANGLES[0]); ++i)
+    for (int i = 0; i < sizeof(HOMEANGLES)/sizeof(HOMEANGLES[0]); ++i)
     {
         motor_angles[i] = HOMEANGLES[i];
     }
@@ -73,7 +72,7 @@ void go_to_home(DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_IDs
 
 void start_motors(DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_IDs)
 {
-    for(const auto motor_ID : motor_IDs )
+    for (const auto motor_ID : motor_IDs)
     {
         motor.torqueOn(motor_ID);
     }
@@ -81,7 +80,7 @@ void start_motors(DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_I
 
 void stop_motors(DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_IDs)
 {
-    for(const auto motor_ID : motor_IDs )
+    for (const auto motor_ID : motor_IDs)
     {
         motor.torqueOff(motor_ID);
     }
