@@ -15,9 +15,9 @@ void multiply(float matrix1[4][4], float matrix2[4], float result[4])
 void inverse_kinematics(float x, float y, float THETA[4])
 {
     // Makes sure the input coordinates are reachable with the current arm segment lengths
-    if ((x >= -0.24 && x <= 0.45) && (y >= -0.46 && y <= 0.46))
+    if((x >= -0.24 && x <= 0.45) && (y >= -0.46 && y <= 0.46))
     {
-        for (int i = 0; i < 4; i++)
+        for(int i = 0; i < 4; i++)
         {
             THETA[i] = THETA[i] * M_PI / 180;
         }
@@ -39,7 +39,7 @@ void inverse_kinematics(float x, float y, float THETA[4])
             {(125*sin(THETA[1]))/(36*(cos(THETA[1])*sin(THETA[3]) - cos(THETA[3])*sin(THETA[1]))), -(125*cos(THETA[1]))/(36*(cos(THETA[1])*sin(THETA[3]) - cos(THETA[3])*sin(THETA[1]))),  (125*sin(THETA[1]))/(36*(cos(THETA[1])*sin(THETA[3]) - cos(THETA[3])*sin(THETA[1]))), -(125*cos(THETA[1]))/(36*(cos(THETA[1])*sin(THETA[3]) - cos(THETA[3])*sin(THETA[1])))}};
     
         float theMatrix[4] = {};
-        for (int i = 0; i < 30; i++)
+        for(int i = 0; i < 30; i++)
         {
             F[0] = Ln+La*sin(THETA[0])+Lc*sin(THETA[2])-Lb*sin(THETA[1])-Ld*sin(THETA[3]);
             F[1] = Lb*cos(THETA[1])+Ld*cos(THETA[3])-La*cos(THETA[0])-Lc*cos(THETA[2]);
@@ -85,20 +85,20 @@ void inverse_kinematics(float x, float y, float THETA[4])
         // Danger zone = (-THETA[0] (Quadrant 3) and +THETA[1] (Quadrant 1))
         if(THETA[0]-THETA[1] < -48)
         {
-            //Serial.println("Error: Collision avoided");
+            Serial.println("Error: Collision avoided");
 
-            for (int i = 0; i < sizeof(HOMEANGLES)/sizeof(HOMEANGLES[0]); ++i)
+            for(int i = 0; i < sizeof(HOEMANGLES)/sizeof(HOEMANGLES[0]); ++i)
             {
-                THETA[i] = HOMEANGLES[i];
+                THETA[i] = HOEMANGLES[i];
             }
         }
     }
     else
     {
-        //Serial.println("Error: Unattainable angles");
-        for (int i = 0; i < sizeof(HOMEANGLES)/sizeof(HOMEANGLES[0]); ++i)
-        {
-            THETA[i] = HOMEANGLES[i];
-        }
+        Serial.println("Error: Unattainable angles");
+            for(int i = 0; i < sizeof(HOEMANGLES)/sizeof(HOEMANGLES[0]); ++i)
+            {
+                THETA[i] = HOEMANGLES[i];
+            }
     }
 }

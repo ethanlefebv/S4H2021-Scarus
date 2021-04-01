@@ -82,7 +82,7 @@ void loop()
 
         case State::Parse:
         {
-        	  // checks for start, stop and sets nut values
+        	// checks for start, stop and sets nut values
             Nut nut;
             int parse_res = parse_msg(msg, nut);
             // TODO: take out parse_nut from parse_msg
@@ -101,19 +101,16 @@ void loop()
 
         case State::Moving:
         {
-            //run_test(dyna_workbench, MOTOR_IDS);
-            //pick();
-            
-//            Serial.println("-----");
-//            Serial.println(current_nut.coord.x, 3);
-//            Serial.println(current_nut.coord.y, 3);
-//            Serial.println(current_nut.type);
+            //Serial.println("-----");
+            //Serial.println(current_nut.coord.x, 3);
+            //Serial.println(current_nut.coord.y, 3);
+            //Serial.println(current_nut.type);
             
             inverse_kinematics(current_nut.coord.x, current_nut.coord.y, motor_angles);
             
-//            Serial.println("------");
-//            Serial.println(motorAngles[0], 3);
-//            Serial.println(motorAngles[1], 3);
+            //Serial.println("------");
+            //Serial.println(motor_angles[0], 3);
+            //Serial.println(motor_angles[1], 3);
             
             move_to_pos_wait(dyna_workbench, MOTOR_IDS, motor_angles);
             send_data("Done");
