@@ -1,11 +1,11 @@
-import serial_functions.functions as ser_funcs
+import Communication.serial_functions.functions as ser_funcs
 import fake_serial
 
 # send_data() function's tests (les reverefier)
 
 def test_send_data_string_return():
     ser = fake_serial.FakeSerial()
-    assert ser_funcs.send_data(ser, "moma") == "0moma"
+    assert ser_funcs.send_data(ser, "moma") == "0moma\n"
     return
 
 def test_send_data_int_return():
