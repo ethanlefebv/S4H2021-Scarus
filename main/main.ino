@@ -22,9 +22,7 @@ enum class State { Sleep, Wait, Parse, Moving };
 
 // ---------- Constants ----------
 // --- Motors ---
-const uint8_t ID_MOTOR_1 = 1;
-const uint8_t ID_MOTOR_2 = 2;
-const std::vector<uint8_t> MOTOR_IDS = { ID_MOTOR_1, ID_MOTOR_2 };
+const std::vector<uint8_t> MOTOR_IDS = { (const uint8_t)1, (const uint8_t)2 };
 const uint8_t LINEAR_PIN = 5;
 const uint8_t SOLENOID_PIN = 6;
 
@@ -32,7 +30,7 @@ const uint8_t SOLENOID_PIN = 6;
 // --- Motors ---
 DynamixelWorkbench dyna1;
 DynamixelWorkbench dyna2;
-std::vector<DynamixelWorkbench> dynas = { dyna1, dyna2 };
+std::vector<DynamixelWorkbench*> dynas = { &dyna1, &dyna2 };
 
 // --- Data ---
 State current_state = State::Sleep;
@@ -45,7 +43,7 @@ void setup()
 {
     const int BAUDRATE = 115200;
     Serial.begin(BAUDRATE);
-    
+
     init_motors(dynas, MOTOR_IDS, motor_angles);
     pinMode(LINEAR_PIN, OUTPUT);
     pinMode(SOLENOID_PIN, OUTPUT);

@@ -114,7 +114,7 @@ def model_predict(image_data, interpreter):
     return model_predictions
 
 
-def get_boxes_tensors(boxes_data, scores, threshold=0.99):
+def get_boxes_tensors(boxes_data, scores, threshold=0.75):
     """
     :param boxes_data: tensor containing the data of the boxes the model predicted
     :param scores: tensor containing the data of the predictions and scores for all the boxes
