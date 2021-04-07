@@ -5,6 +5,11 @@ encoding = "utf-8"
 baudrate = 115200
 ID = '0'
 
+class SerialError(Exception):
+    """ Raised when an error occurs with the OpenCR. """
+    pass
+
+
 def print_received_data(data):
     print("Received : '{0}'\n".format(data))
 
@@ -43,11 +48,11 @@ def send_data(ser, data):
 def coord_to_string(x, y):
     """Convert a 2D coordinate to a string.
 
-    Insert '|' between the coordinates to simplify the
+    Insert '/' between the coordinates to simplify the
     split operation when decoding.
     Return the string.
     """
-    return "{0}|{1}".format(x, y)
+    return "{0}/{1}".format(x, y)
 
 
 def nut_to_string(x, y, type):
@@ -57,13 +62,17 @@ def nut_to_string(x, y, type):
     the split operation when decoding.
     Return the string.
     """
-    return "{0}/{1}".format(type, coord_to_string(x, y))
+    return "/{0}/{1}/".format(coord_to_string(x, y), type)
 
-def wait_for_data(ser, check):
-    data = None
-    #while data != check:
-    time.sleep(0.1)
+
+def wait_for_data(ser, wanted):
+    """Wait in this function until a wanted string is read.
+    """
     data = get_data(ser)
+    while data != wanted:
+        data = get_data(ser)
+        time.sleep(0.01)
+
     print_received_data(data)
     return data
 

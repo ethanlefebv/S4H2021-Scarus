@@ -1,29 +1,18 @@
-#include <Arduino.h>
-
 #ifndef comm_functions_h
 #define comm_functions_h
 
-struct Coord
-{
-    int X;
-    int Y;
-};
-
-struct Nut
-{
-    Coord coord;
-    int type;
-};
+class String;
+struct Nut;
+struct Coord;
 
 /// Read data from the serial port.
 /// Ignore the message if it was sent by this device.
 /// Return the received data.
 String get_data();
 
-/// Parse a coordinate from a String.
-/// Return the coordinate if it was valid, else
-/// return (9999,9999).
-Coord parse_coord(const String& data);
+/// Parse an int from a String.
+/// Return the read value with the param int_data.
+String parse_data(const String& data, int& int_data);
 
 /// Parse and return a Nut from a String.
 Nut parse_nut(const String& data);
@@ -36,5 +25,9 @@ String send_data(const String& data);
 String coord_to_string(const Coord& coord);
 
 String nut_to_string(const Nut& nut);
+
+bool should_start(const String& msg);
+
+bool should_stop(const String& msg);
 
 #endif
