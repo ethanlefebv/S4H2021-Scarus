@@ -17,6 +17,7 @@ def get_inference_nut(cam, model_path, should_log):
         nuts_list = timed_inference(cam, model_path)
     else:
         nuts_list = inference(cam, model_path)
+        print("Nuts list:", nuts_list)
 
     if nuts_list == []:
         nuts_list = [[0, 0, INVALID_NUT]]
@@ -45,7 +46,7 @@ def inference(input_image, model_path):
     image_data, original_image = load_image(camera=input_image, input_size=416, image_path=image_path)
     interpreter = Interpreter(model_path=model_path)
     model_output = model_predict(image_data, interpreter)
-    boxes_tensors, confidence_tensors = get_boxes_tensors(model_output[0], model_output[1], threshold=.90)
+    boxes_tensors, confidence_tensors = get_boxes_tensors(model_output[0], model_output[1], threshold=0.90)
     output = output_parsing(boxes_tensors, confidence_tensors)
     # show_marked_image(image_data,output) # Uncomment if you want to see the image with predictions
     # print(output)
@@ -114,7 +115,7 @@ def model_predict(image_data, interpreter):
     return model_predictions
 
 
-def get_boxes_tensors(boxes_data, scores, threshold=0.75):
+def get_boxes_tensors(boxes_data, scores, threshold=0.99):
     """
     :param boxes_data: tensor containing the data of the boxes the model predicted
     :param scores: tensor containing the data of the predictions and scores for all the boxes
