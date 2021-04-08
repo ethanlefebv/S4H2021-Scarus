@@ -44,7 +44,7 @@ void setup()
     const int BAUDRATE = 115200;
     Serial.begin(BAUDRATE);
 
-    init_motors(dynas, MOTOR_IDS, motor_angles);
+    init_motors(dynas, MOTOR_IDS, motor_angles, LINEAR_PIN);
     pinMode(LINEAR_PIN, OUTPUT);
     pinMode(SOLENOID_PIN, OUTPUT);
 }
@@ -63,7 +63,7 @@ void loop()
             {
                 send_data("Starting the program.");
                 start_motors(dynas, MOTOR_IDS);
-                go_to_home(dynas, MOTOR_IDS, motor_angles);
+                go_to_home(dynas, MOTOR_IDS, motor_angles, LINEAR_PIN);
                 current_state = State::Wait;
             }
             break;

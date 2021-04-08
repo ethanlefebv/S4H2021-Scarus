@@ -1,13 +1,12 @@
 import cv2
 import numpy as np
 from tflite_runtime.interpreter import Interpreter
-import time
 
 INVALID_NUT = -1
 
 def coord_cam_to_robot(nut):
-    nut[0] = int(193*nut[0]/416+8-8) #x in mm
-    nut[1] = int(-199*nut[1]/416+477-32) #y in mm
+    nut[0] = int(193*nut[0]/416+8-10) #x in mm
+    nut[1] = int(-199*nut[1]/416+477-27) #y in mm
     nut[2] = int(nut[2])
     return nut
 
@@ -17,7 +16,6 @@ def get_inference_nut(cam, model_path, should_log):
         nuts_list = timed_inference(cam, model_path)
     else:
         nuts_list = inference(cam, model_path)
-        print("Nuts list:", nuts_list)
 
     if nuts_list == []:
         nuts_list = [[0, 0, INVALID_NUT]]
@@ -48,8 +46,8 @@ def inference(input_image, model_path):
     model_output = model_predict(image_data, interpreter)
     boxes_tensors, confidence_tensors = get_boxes_tensors(model_output[0], model_output[1], threshold=0.90)
     output = output_parsing(boxes_tensors, confidence_tensors)
-    # show_marked_image(image_data,output) # Uncomment if you want to see the image with predictions
-    # print(output)
+    #show_marked_image(image_data,output) # Uncomment if you want to see the image with predictions
+    #print(output)
     return output
     
 

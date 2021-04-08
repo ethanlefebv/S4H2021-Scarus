@@ -13,9 +13,9 @@ void move_to_pos(std::vector<DynamixelWorkbench*>& motors, const std::vector<uin
 
 bool move_to_pos_wait(std::vector<DynamixelWorkbench*>& motors, const std::vector<uint8_t>& motor_IDs, float angles[4]);
 
-void init_motors(std::vector<DynamixelWorkbench*>&  motors, const std::vector<uint8_t>& motor_IDs, float motor_angles[4]);
+void init_motors(std::vector<DynamixelWorkbench*>&  motors, const std::vector<uint8_t>& motor_IDs, float motor_angles[4], const uint8_t LINEAR_PIN);
 
-void go_to_home(std::vector<DynamixelWorkbench*>& motors, const std::vector<uint8_t>& motor_IDs, float motor_angles[4]);
+void go_to_home(std::vector<DynamixelWorkbench*>& motors, const std::vector<uint8_t>& motor_IDs, float motor_angles[4], const uint8_t LINEAR_PIN);
 
 void start_motors(std::vector<DynamixelWorkbench*>& motors, const std::vector<uint8_t>& motor_IDs);
 
