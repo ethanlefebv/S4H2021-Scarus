@@ -101,10 +101,9 @@ void loop()
         case State::Moving:
         {
             go_to_pick(current_nut, dynas, MOTOR_IDS, motor_angles, LINEAR_PIN, SOLENOID_PIN);
-            send_data("Picked");
             go_to_drop(current_nut, dynas, MOTOR_IDS, motor_angles, LINEAR_PIN, SOLENOID_PIN);
-            
             send_data("Done");
+            
             current_state = State::Wait;
             break;
         }

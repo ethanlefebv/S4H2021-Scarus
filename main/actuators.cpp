@@ -58,7 +58,7 @@ void init_motors(std::vector<DynamixelWorkbench*>& motors, const std::vector<uin
         motors[i]->torqueOn(motor_IDs[i]);
     }
 
-    go_to_home(motors, motor_IDs, motor_angles, LINEAR_PIN);
+    //go_to_home(motors, motor_IDs, motor_angles, LINEAR_PIN);
 }
 
 void go_to_home(std::vector<DynamixelWorkbench*>& motors, const std::vector<uint8_t>& motor_IDs, float motor_angles[4], const uint8_t LINEAR_PIN)
