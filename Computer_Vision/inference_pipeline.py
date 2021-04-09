@@ -4,9 +4,17 @@ from tflite_runtime.interpreter import Interpreter
 
 INVALID_NUT = -1
 
+def fish_eye_correction(nut):
+    dx = nut[0]-207
+    dy = nut[1]-207
+    nut[0] = int(nut[0]-(0.16*dx))
+    nut[1] = int(nut[1]-(0.16*dy))
+    return nut
+
 def coord_cam_to_robot(nut):
-    nut[0] = int(193*nut[0]/416+8-10) #x in mm
-    nut[1] = int(-199*nut[1]/416+477-27) #y in mm
+    nut = fish_eye_correction(nut)
+    nut[0] = int(193*nut[0]/416+8-15) #x in mm
+    nut[1] = int(-199*nut[1]/416+477-25) #y in mm
     nut[2] = int(nut[2])
     return nut
 
@@ -25,7 +33,7 @@ def get_inference_nut(cam, model_path, should_log):
     y = first_nut[1]
     nut_class = int(first_nut[2])
     print('Yolo model outputs : ', x, y, nut_class)
-    return first_nut
+    return coord_cam_to_robot(first_nut)
 
 
 def timed_inference(input_image, model_path):

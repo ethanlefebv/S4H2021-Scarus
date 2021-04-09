@@ -54,7 +54,7 @@ void init_motors(std::vector<DynamixelWorkbench*>& motors, const std::vector<uin
         const char* error_message;
         motors[i]->init(motor_name, 57600, &error_message);
         motors[i]->ping(motor_IDs[i], &model_number, &error_message);
-        motors[i]->jointMode(motor_IDs[i], 0, 0, &error_message);
+        motors[i]->jointMode(motor_IDs[i], 150, 0, &error_message);
         motors[i]->torqueOn(motor_IDs[i]);
     }
 
