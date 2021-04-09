@@ -210,3 +210,11 @@ def show_marked_image(image, detected_list):
     cv2.imshow('unmarked',marked_image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+
+def get_cropped_image(filename, camera_index):
+    camera = cv2.VideoCapture(camera_index, cv2.CAP_DSHOW)
+    original_image = take_picture(camera)
+    image_data = crop_frame(original_image)
+    cv2.imwrite(filename, image_data)
+
+#get_cropped_image("calib1.png", 1)
