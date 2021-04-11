@@ -142,5 +142,6 @@ void go_to_drop(const Nut& current_nut, std::vector<DynamixelWorkbench*>& motors
 
     inverse_kinematics(dropX, dropY, motor_angles);
     move_to_pos_wait(motors, motor_IDs, motor_angles);
+    delay(100);
     drop(LINEAR_PIN, SOLENOID_PIN);
 }

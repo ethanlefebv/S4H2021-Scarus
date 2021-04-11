@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from tflite_runtime.interpreter import Interpreter
+import time
 
 INVALID_NUT = -1
 
@@ -49,6 +50,7 @@ def inference(input_image, model_path):
         image_path = input_image
     else:
         image_path = "camera"
+
     image_data, original_image = load_image(camera=input_image, input_size=416, image_path=image_path)
     interpreter = Interpreter(model_path=model_path)
     model_output = model_predict(image_data, interpreter)
@@ -59,7 +61,7 @@ def inference(input_image, model_path):
     return output
     
 
-def load_image(camera=None, input_size=416, image_path='camera',crop=True):
+def load_image(camera=None, input_size=416, image_path='camera', crop=True):
     """
     Load the image or take picture and gives it the size given in inputs and returns the image
 
@@ -73,10 +75,12 @@ def load_image(camera=None, input_size=416, image_path='camera',crop=True):
     else:
         original_image = cv2.imread(image_path)
         original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB) # TODO check if the image exists
+
     if crop == True:
         image_data = crop_frame(original_image)
     else:
         image_data = original_image
+
     image_data = cv2.resize(image_data, (input_size, input_size))
     image_data = image_data / 255.
     # darknet models need 0-1 range of pixels and not 0-255
@@ -90,7 +94,9 @@ def take_picture(camera):
     """
     :return: picture taken from the main camera of the device. frame is a numpy array ranging from 0-255
     """
-    _, frame = camera.read()
+    # The for loop solves a mysterious bug on the Pi
+    for i in range(5):
+        _, frame = camera.read()
     return frame
 
 
