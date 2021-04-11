@@ -20,19 +20,15 @@ Authors: Alec Gagnon,      gaga2120
 // ---------- Enumerations ----------
 enum class State { Sleep, Wait, Parse, Moving };
 
-
 // ---------- Constants ----------
 // --- Motors ---
-const uint8_t ID_MOTOR_1 = 1;
-const uint8_t ID_MOTOR_2 = 2;
-const std::vector<uint8_t> MOTOR_IDS = { ID_MOTOR_1, ID_MOTOR_2};
+const std::vector<uint8_t> MOTOR_IDS = { (const uint8_t)1, (const uint8_t)2 };
 const uint8_t LINEAR_PIN = 5;
 const uint8_t SOLENOID_PIN = 6;
 
-
 // ---------- Variables ----------
 // --- Motors ---
-DynamixelWorkbench dyna_workbench;
+DynamixelWorkbench dyna;
 
 // --- Data ---
 State current_state = State::Sleep;
@@ -40,14 +36,13 @@ String msg = String();
 Nut current_nut;
 float motor_angles[4];
 
-
 // ---------- Main functions ----------
 void setup()
 {
-    const int BAUDRATE = 115200;  
+    const int BAUDRATE = 115200;
     Serial.begin(BAUDRATE);
-  
-    init_motor(dyna_workbench, MOTOR_IDS, motor_angles);
+
+    init_motors(dyna, MOTOR_IDS, motor_angles, LINEAR_PIN);
     pinMode(LINEAR_PIN, OUTPUT);
     pinMode(SOLENOID_PIN, OUTPUT);
 }
@@ -65,8 +60,8 @@ void loop()
             if(should_start(msg))
             {
                 send_data("Starting the program.");
-                start_motors(dyna_workbench, MOTOR_IDS);
-                go_to_home(dyna_workbench, MOTOR_IDS, motor_angles);
+                start_motors(dyna, MOTOR_IDS);
+                go_to_home(dyna, MOTOR_IDS, motor_angles, LINEAR_PIN);
                 current_state = State::Wait;
             }
             break;
@@ -96,6 +91,7 @@ void loop()
             else if (should_stop(msg))
             {
                 send_data("Stopping the program.");
+                stop_motors(dyna, MOTOR_IDS);
                 current_state = State::Sleep;
             }         
             break;
@@ -103,10 +99,10 @@ void loop()
 
         case State::Moving:
         {
-            go_to_pick(current_nut, dyna_workbench, MOTOR_IDS, motor_angles, LINEAR_PIN, SOLENOID_PIN);
-            go_to_drop(current_nut, dyna_workbench, MOTOR_IDS, motor_angles, LINEAR_PIN, SOLENOID_PIN);
-            
+            go_to_pick(current_nut, dyna, MOTOR_IDS, motor_angles, LINEAR_PIN, SOLENOID_PIN);
+            go_to_drop(current_nut, dyna, MOTOR_IDS, motor_angles, LINEAR_PIN, SOLENOID_PIN);
             send_data("Done");
+            
             current_state = State::Wait;
             break;
         }
