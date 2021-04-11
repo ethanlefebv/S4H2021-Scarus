@@ -28,9 +28,7 @@ const uint8_t SOLENOID_PIN = 6;
 
 // ---------- Variables ----------
 // --- Motors ---
-DynamixelWorkbench dyna1;
-DynamixelWorkbench dyna2;
-std::vector<DynamixelWorkbench*> dynas = { &dyna1, &dyna2 };
+DynamixelWorkbench dyna;
 
 // --- Data ---
 State current_state = State::Sleep;
@@ -44,7 +42,7 @@ void setup()
     const int BAUDRATE = 115200;
     Serial.begin(BAUDRATE);
 
-    init_motors(dynas, MOTOR_IDS, motor_angles, LINEAR_PIN);
+    init_motors(dyna, MOTOR_IDS, motor_angles, LINEAR_PIN);
     pinMode(LINEAR_PIN, OUTPUT);
     pinMode(SOLENOID_PIN, OUTPUT);
 }
@@ -62,8 +60,8 @@ void loop()
             if(should_start(msg))
             {
                 send_data("Starting the program.");
-                start_motors(dynas, MOTOR_IDS);
-                go_to_home(dynas, MOTOR_IDS, motor_angles, LINEAR_PIN);
+                start_motors(dyna, MOTOR_IDS);
+                go_to_home(dyna, MOTOR_IDS, motor_angles, LINEAR_PIN);
                 current_state = State::Wait;
             }
             break;
@@ -93,6 +91,7 @@ void loop()
             else if (should_stop(msg))
             {
                 send_data("Stopping the program.");
+                stop_motors(dyna, MOTOR_IDS);
                 current_state = State::Sleep;
             }         
             break;
@@ -100,8 +99,8 @@ void loop()
 
         case State::Moving:
         {
-            go_to_pick(current_nut, dynas, MOTOR_IDS, motor_angles, LINEAR_PIN, SOLENOID_PIN);
-            go_to_drop(current_nut, dynas, MOTOR_IDS, motor_angles, LINEAR_PIN, SOLENOID_PIN);
+            go_to_pick(current_nut, dyna, MOTOR_IDS, motor_angles, LINEAR_PIN, SOLENOID_PIN);
+            go_to_drop(current_nut, dyna, MOTOR_IDS, motor_angles, LINEAR_PIN, SOLENOID_PIN);
             send_data("Done");
             
             current_state = State::Wait;

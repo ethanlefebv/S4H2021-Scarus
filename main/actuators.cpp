@@ -13,28 +13,28 @@ int32_t degrees_to_int(const float angle)
 }
 
 /// Moves the motors to a wanted position.
-void move_to_pos(std::vector<DynamixelWorkbench*>& motors, const std::vector<uint8_t>& motor_IDs, float angles[4])
+void move_to_pos(DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_IDs, float angles[4])
 {
     for (size_t i = 0; i < motor_IDs.size(); ++i)
     {
-        motors[i]->goalPosition(motor_IDs[i], degrees_to_int(angles[i]));
+        motor.goalPosition(motor_IDs[i], degrees_to_int(angles[i]));
     }
 }
 
 /// Calls move_to_pos and waits until the movements are complete.
-bool move_to_pos_wait(std::vector<DynamixelWorkbench*>& motors, const std::vector<uint8_t>& motor_IDs, float angles[4])
+bool move_to_pos_wait(DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_IDs, float angles[4])
 {
     int done_motors = 0;
     for (int i = 0; i < 20 && done_motors != motor_IDs.size(); ++i)
     {
-        move_to_pos(motors, motor_IDs, angles);
+        move_to_pos(motor, motor_IDs, angles);
          
         std::vector<int32_t> v_pos;
         v_pos.reserve(motor_IDs.size());
         
         for (size_t j = 0; j < motor_IDs.size(); ++j)
         {
-            motors[j]->getPresentPositionData(motor_IDs[j], &v_pos[j]);
+            motor.getPresentPositionData(motor_IDs[j], &v_pos[j]);
             
             if (abs(degrees_to_int(angles[j]) - v_pos[j]) < 3)
             {
@@ -45,23 +45,21 @@ bool move_to_pos_wait(std::vector<DynamixelWorkbench*>& motors, const std::vecto
     }
 }
 
-void init_motors(std::vector<DynamixelWorkbench*>& motors, const std::vector<uint8_t>& motor_IDs, float motor_angles[4], const uint8_t LINEAR_PIN)
+void init_motors(DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_IDs, float motor_angles[4], const uint8_t LINEAR_PIN)
 {
     for (size_t i = 0; i < motor_IDs.size(); ++i)
     {
         const char* motor_name = i+"";
         uint16_t model_number = 0;
         const char* error_message;
-        motors[i]->init(motor_name, 57600, &error_message);
-        motors[i]->ping(motor_IDs[i], &model_number, &error_message);
-        motors[i]->jointMode(motor_IDs[i], 150, 0, &error_message);
-        motors[i]->torqueOn(motor_IDs[i]);
+        motor.init(motor_name, 57600, &error_message);
+        motor.ping(motor_IDs[i], &model_number, &error_message);
+        motor.jointMode(motor_IDs[i], 150, 0, &error_message);
+        motor.torqueOn(motor_IDs[i]);
     }
-
-    //go_to_home(motors, motor_IDs, motor_angles, LINEAR_PIN);
 }
 
-void go_to_home(std::vector<DynamixelWorkbench*>& motors, const std::vector<uint8_t>& motor_IDs, float motor_angles[4], const uint8_t LINEAR_PIN)
+void go_to_home(DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_IDs, float motor_angles[4], const uint8_t LINEAR_PIN)
 {
     for (int i = 0; i < sizeof(HOMEANGLES)/sizeof(HOMEANGLES[0]); ++i)
     {
@@ -69,23 +67,23 @@ void go_to_home(std::vector<DynamixelWorkbench*>& motors, const std::vector<uint
     }
     linear_high(LINEAR_PIN);
     delay(1000);
-    move_to_pos_wait(motors, motor_IDs, motor_angles);
+    move_to_pos_wait(motor, motor_IDs, motor_angles);
     analogWrite(LINEAR_PIN, 0);
 }
 
-void start_motors(std::vector<DynamixelWorkbench*>& motors, const std::vector<uint8_t>& motor_IDs)
+void start_motors(DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_IDs)
 {
     for (size_t i = 0; i < motor_IDs.size(); ++i)
     {
-        motors[i]->torqueOn(motor_IDs[i]);
+        motor.torqueOn(motor_IDs[i]);
     }
 }
 
-void stop_motors(std::vector<DynamixelWorkbench*>& motors, const std::vector<uint8_t>& motor_IDs)
+void stop_motors(DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_IDs)
 {
     for (size_t i = 0; i < motor_IDs.size(); ++i)
     {
-        motors[i]->torqueOff(motor_IDs[i]);
+        motor.torqueOff(motor_IDs[i]);
     }
 }
 
@@ -113,18 +111,18 @@ void drop(const uint8_t LINEAR_PIN, const uint8_t SOLENOID_PIN)
     analogWrite(SOLENOID_PIN, 0);
 }
 
-void go_to_pick(const Nut& current_nut, std::vector<DynamixelWorkbench*>& motors, const std::vector<uint8_t>& motor_IDs, float motor_angles[4], const uint8_t LINEAR_PIN, const uint8_t SOLENOID_PIN)
+void go_to_pick(const Nut& current_nut, DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_IDs, float motor_angles[4], const uint8_t LINEAR_PIN, const uint8_t SOLENOID_PIN)
 {
     linear_high(LINEAR_PIN);
     delay(500);
     inverse_kinematics(current_nut.coord.x, current_nut.coord.y, motor_angles);
-    move_to_pos_wait(motors, motor_IDs, motor_angles);
+    move_to_pos_wait(motor, motor_IDs, motor_angles);
     delay(500);
     pick(LINEAR_PIN, SOLENOID_PIN);
     delay(500);
 }
 
-void go_to_drop(const Nut& current_nut, std::vector<DynamixelWorkbench*>& motors, const std::vector<uint8_t>& motor_IDs, float motor_angles[4], const uint8_t LINEAR_PIN, const uint8_t SOLENOID_PIN)
+void go_to_drop(const Nut& current_nut, DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_IDs, float motor_angles[4], const uint8_t LINEAR_PIN, const uint8_t SOLENOID_PIN)
 {
     float dropX = 0.097;
     float dropY = 0.150;
@@ -141,7 +139,7 @@ void go_to_drop(const Nut& current_nut, std::vector<DynamixelWorkbench*>& motors
     }
 
     inverse_kinematics(dropX, dropY, motor_angles);
-    move_to_pos_wait(motors, motor_IDs, motor_angles);
+    move_to_pos_wait(motor, motor_IDs, motor_angles);
     delay(100);
     drop(LINEAR_PIN, SOLENOID_PIN);
 }
