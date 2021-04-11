@@ -25,7 +25,7 @@ void move_to_pos(std::vector<DynamixelWorkbench*>& motors, const std::vector<uin
 bool move_to_pos_wait(std::vector<DynamixelWorkbench*>& motors, const std::vector<uint8_t>& motor_IDs, float angles[4])
 {
     int done_motors = 0;
-    for (int i = 0; i < 50 && done_motors != motor_IDs.size(); ++i)
+    for (int i = 0; i < 20 && done_motors != motor_IDs.size(); ++i)
     {
         move_to_pos(motors, motor_IDs, angles);
          

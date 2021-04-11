@@ -13,8 +13,8 @@ def fish_eye_correction(nut):
 
 def coord_cam_to_robot(nut):
     nut = fish_eye_correction(nut)
-    nut[0] = int(193*nut[0]/416+8-15) #x in mm
-    nut[1] = int(-199*nut[1]/416+477-25) #y in mm
+    nut[0] = int(193*nut[0]/416+8-11) #x in mm
+    nut[1] = int(-199*nut[1]/416+477-32) #y in mm
     nut[2] = int(nut[2])
     return nut
 
@@ -210,11 +210,3 @@ def show_marked_image(image, detected_list):
     cv2.imshow('unmarked',marked_image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-
-def get_cropped_image(filename, camera_index):
-    camera = cv2.VideoCapture(camera_index, cv2.CAP_DSHOW)
-    original_image = take_picture(camera)
-    image_data = crop_frame(original_image)
-    cv2.imwrite(filename, image_data)
-
-#get_cropped_image("calib1.png", 1)
