@@ -1,4 +1,4 @@
-#include "inverse_kinematics.h"
+#include "inverse_kinematics.hpp"
 #include <Arduino.h>
 
 void multiply(float matrix1[4][4], float matrix2[4], float result[4])

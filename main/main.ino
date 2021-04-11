@@ -4,17 +4,17 @@ Description: Main code that moves the motors. To be run from the OpenCR.
 Authors: Alec Gagnon,      gaga2120
          Étienne Lefebvre, lefe1001
          Robin Mailhot,    mair1803
-         Charles Caya
+         Charles Caya,     cayc2401
 */
 
 // ---------- Libraries ----------
 #include <Arduino.h>
 #include <DynamixelWorkbench.h>
 #include <vector>
-#include "comm_functions.h"
-#include "actuators.h"
-#include "inverse_kinematics.h"
-#include "nut.h"
+#include "comm_functions.hpp"
+#include "actuators.hpp"
+#include "inverse_kinematics.hpp"
+#include "nut.hpp"
 
 
 // ---------- Enumerations ----------
