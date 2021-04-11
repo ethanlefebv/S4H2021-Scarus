@@ -1,30 +1,111 @@
+/*
+Project:     SCARUS
+Description: Main code that moves the motors. To be run from the OpenCR.
+Authors: Alec Gagnon,      gaga2120
+         Étienne Lefebvre, lefe1001
+         Robin Mailhot,    mair1803
+         Charles Caya
+*/
+
+// ---------- Libraries ----------
 #include <Arduino.h>
+#include <DynamixelWorkbench.h>
+#include <vector>
 #include "comm_functions.h"
+#include "actuators.h"
 #include "inverse_kinematics.h"
+#include "nut.h"
 
-int baudrate = 115200;
-bool run = false;
 
+// ---------- Enumerations ----------
+enum class State { Sleep, Wait, Parse, Moving };
+
+// ---------- Constants ----------
+// --- Motors ---
+const std::vector<uint8_t> MOTOR_IDS = { (const uint8_t)1, (const uint8_t)2 };
+const uint8_t LINEAR_PIN = 5;
+const uint8_t SOLENOID_PIN = 6;
+
+// ---------- Variables ----------
+// --- Motors ---
+DynamixelWorkbench dyna;
+
+// --- Data ---
+State current_state = State::Sleep;
+String msg = String();
+Nut current_nut;
+float motor_angles[4];
+
+// ---------- Main functions ----------
 void setup()
 {
-    Serial.begin(baudrate);
+    const int BAUDRATE = 115200;
+    Serial.begin(BAUDRATE);
+
+    init_motors(dyna, MOTOR_IDS, motor_angles, LINEAR_PIN);
+    pinMode(LINEAR_PIN, OUTPUT);
+    pinMode(SOLENOID_PIN, OUTPUT);
 }
 
 void loop()
 {
-    String msg = get_data();
-    msg = check_for_start_stop_signal(msg, &run);
-
-    if (run)
+    switch (current_state)
     {
-        // This is the main loop for the program.
+        case State::Sleep:
+        {
+            // Waiting for the signal to start the program
+            send_data("Waiting for the START command.");
+            delay(100);
+            msg = get_data();
+            if(should_start(msg))
+            {
+                send_data("Starting the program.");
+                start_motors(dyna, MOTOR_IDS);
+                go_to_home(dyna, MOTOR_IDS, motor_angles, LINEAR_PIN);
+                current_state = State::Wait;
+            }
+            break;
+        }
 
-        Nut received_nut = parse_nut(msg);
-        send_data("I received: " + msg + ", which converts to: " + nut_to_string(received_nut));
+        case State::Wait:
+        {
+            // Waiting for data on the serial port
+            msg = get_data();
+            if (msg.length() != 0)
+            {
+                current_state = State::Parse;
+            }
+            break;
+        }
+
+        case State::Parse:
+        {
+            // checks for start, stop and sets nut values
+            Nut nut = parse_nut(msg);
+
+            if (nut.is_valid)
+            {
+                current_state = State::Moving;
+                current_nut = nut;
+            }
+            else if (should_stop(msg))
+            {
+                send_data("Stopping the program.");
+                stop_motors(dyna, MOTOR_IDS);
+                current_state = State::Sleep;
+            }         
+            break;
+        }
+
+        case State::Moving:
+        {
+            go_to_pick(current_nut, dyna, MOTOR_IDS, motor_angles, LINEAR_PIN, SOLENOID_PIN);
+            go_to_drop(current_nut, dyna, MOTOR_IDS, motor_angles, LINEAR_PIN, SOLENOID_PIN);
+            send_data("Done");
+            
+            current_state = State::Wait;
+            break;
+        }
     }
-    else
-    {
-        send_data("Waiting for the START command.");
-        delay(1000);
-    }
+    delay(10);
 }

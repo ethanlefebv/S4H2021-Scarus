@@ -1,22 +1,67 @@
 import cv2
 import numpy as np
 from tflite_runtime.interpreter import Interpreter
+import time
+
+INVALID_NUT = -1
+
+def fish_eye_correction(nut):
+    dx = nut[0]-207
+    dy = nut[1]-207
+    nut[0] = int(nut[0]-(0.16*dx))
+    nut[1] = int(nut[1]-(0.16*dy))
+    return nut
+
+def coord_cam_to_robot(nut):
+    nut = fish_eye_correction(nut)
+    nut[0] = int(193*nut[0]/416+8-11) #x in mm
+    nut[1] = int(-199*nut[1]/416+477-32) #y in mm
+    nut[2] = int(nut[2])
+    return nut
+
+
+def get_inference_nut(cam, model_path, should_log):
+    if should_log:
+        nuts_list = timed_inference(cam, model_path)
+    else:
+        nuts_list = inference(cam, model_path)
+
+    if nuts_list == []:
+        nuts_list = [[0, 0, INVALID_NUT]]
+
+    first_nut = nuts_list[0]
+    x = first_nut[0]
+    y = first_nut[1]
+    nut_class = int(first_nut[2])
+    print('Yolo model outputs : ', x, y, nut_class)
+    return coord_cam_to_robot(first_nut)
+
+
+def timed_inference(input_image, model_path):
+    start_time = time.time()
+    nuts_list = inference(input_image, model_path)
+    inf_time = time.time() - start_time
+    print("Time spent in inference : {0}".format(inf_time))
+    return nuts_list
+
 
 def inference(input_image, model_path):
     if isinstance(input_image, str):
         image_path = input_image
     else:
         image_path = "camera"
+
     image_data, original_image = load_image(camera=input_image, input_size=416, image_path=image_path)
     interpreter = Interpreter(model_path=model_path)
     model_output = model_predict(image_data, interpreter)
-    boxes_tensors, confidence_tensors = get_boxes_tensors(model_output[0], model_output[1], threshold=.90)
+    boxes_tensors, confidence_tensors = get_boxes_tensors(model_output[0], model_output[1], threshold=0.90)
     output = output_parsing(boxes_tensors, confidence_tensors)
-    #show_marked_image(image_data,output) # Uncomment if you want to see the image with predictions
+    # show_marked_image(image_data,output) # Uncomment if you want to see the image with predictions
     # print(output)
     return output
+    
 
-def load_image(camera=None, input_size=416, image_path='camera',crop=True):
+def load_image(camera=None, input_size=416, image_path='camera', crop=True):
     """
     Load the image or take picture and gives it the size given in inputs and returns the image
 
@@ -30,10 +75,12 @@ def load_image(camera=None, input_size=416, image_path='camera',crop=True):
     else:
         original_image = cv2.imread(image_path)
         original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB) # TODO check if the image exists
+
     if crop == True:
         image_data = crop_frame(original_image)
     else:
         image_data = original_image
+
     image_data = cv2.resize(image_data, (input_size, input_size))
     image_data = image_data / 255.
     # darknet models need 0-1 range of pixels and not 0-255
@@ -47,7 +94,9 @@ def take_picture(camera):
     """
     :return: picture taken from the main camera of the device. frame is a numpy array ranging from 0-255
     """
-    _, frame = camera.read()
+    # The for loop solves a mysterious bug on the Pi
+    for i in range(5):
+        _, frame = camera.read()
     return frame
 
 
