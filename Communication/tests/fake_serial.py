@@ -9,7 +9,7 @@ class FakeSerial:
         self._isOpen = True
         self._encoding = "utf-8"
         self._receivedData = b""
-        self._data = b"Hello World!\nSecond sentence.\n0450|-42\n"
+        self._data = b"1Hello World!\n1Second sentence.\n0450/-42\n"
 
     def isOpen(self):
         return self._isOpen
@@ -31,7 +31,7 @@ class FakeSerial:
 
     def readline(self):
         returnIndex = self._data.decode(self._encoding).find("\n")
-        string = b""
+        string = ""
         if returnIndex != -1:
             string = self._data[0:returnIndex+1]
             self._data = self._data[returnIndex+1:]
