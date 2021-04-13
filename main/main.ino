@@ -4,166 +4,47 @@ Description: Main code that moves the motors. To be run from the OpenCR.
 Authors: Alec Gagnon,      gaga2120
          Étienne Lefebvre, lefe1001
          Robin Mailhot,    mair1803
+         Charles Caya,     cayc2401
 */
 
 // ---------- Libraries ----------
 #include <Arduino.h>
 #include <DynamixelWorkbench.h>
-#include "comm_functions.h"
-#include "inverse_kinematics.h"
+#include <vector>
+#include "comm_functions.hpp"
+#include "actuators.hpp"
+#include "inverse_kinematics.hpp"
+#include "nut.hpp"
 
 
 // ---------- Enumerations ----------
-enum class State { Sleep, Wait, Parse, Moving};
-
+enum class State { Sleep, Wait, Parse, Moving };
 
 // ---------- Constants ----------
 // --- Motors ---
-const uint8_t ID_MOTOR_1 = 1;
-const uint8_t ID_MOTOR_2 = 2;
-const uint16_t MODEL_NB_MOTOR_1 = 0;
-const uint16_t MODEL_NB_MOTOR_2 = 0;
-const uint8_t VERRIN_PIN = 22; //51; // GPIO 4
-const uint8_t SOLENOID_PIN = 23; //53; // GPIO 6
-const char* NAME_MOTOR_1 = "";
-const char* NAME_MOTOR_2 = "";
-
-// --- Messages ---
-const int BAUDRATE = 115200;
-
+const std::vector<uint8_t> MOTOR_IDS = { (const uint8_t)1, (const uint8_t)2 };
+const uint8_t LINEAR_PIN = 5;
+const uint8_t SOLENOID_PIN = 6;
 
 // ---------- Variables ----------
 // --- Motors ---
-DynamixelWorkbench dyna_workbench;
+DynamixelWorkbench dyna;
 
 // --- Data ---
 State current_state = State::Sleep;
 String msg = String();
 Nut current_nut;
-
-
-
-// ---------- Function declarations ----------
-// --- Motors ---
-void init_motor(uint8_t motor_ID, const char* motor_name, uint16_t model_number);
-void stop_motors();
-void run_demo();
-
-// --- Messages ---
-void check_for_start();
-void check_for_stop();
-void parse_msg();
-
-
-// ---------- Function definitions ----------
-// --- Motors ---
-void init_motor(uint8_t motor_ID, const char* motor_name, uint16_t model_number)
-{
-    const char* error_message;
-    dyna_workbench.init(motor_name, 57600, &error_message);
-    dyna_workbench.ping(motor_ID, &model_number, &error_message);
-    dyna_workbench.jointMode(motor_ID, 0, 0, &error_message);
-    dyna_workbench.torqueOff(motor_ID, &error_message);
-}
-
-void start_motors()
-{
-    dyna_workbench.torqueOn(ID_MOTOR_1);
-    dyna_workbench.torqueOn(ID_MOTOR_2);
-}
-
-void stop_motors()
-{
-    dyna_workbench.torqueOff(ID_MOTOR_1);
-    dyna_workbench.torqueOff(ID_MOTOR_2);
-}
-
-void run_demo()
-{
-    float x = 0.096; //current_nut.coord.X / 1000.0f;
-    float y = 0.462; //current_nut.coord.Y / 1000.0f;
-    send_data("I received: " + msg + ", which converts to: " + nut_to_string(current_nut));
-
-    // send the coordinates to the inverse_kinematics functions to get angles
-    float current_angles[4] = {80.0, 80.0, -130.0, 150.0};
-    inverse_kinematics(x, y, current_angles);
-    send_data("OpenCR: Angles : " + String((int)current_angles[0]) + ", " + String((int)current_angles[1]));
-
-    // move the motors to the wanted angles
-    dyna_workbench.goalPosition(ID_MOTOR_1, (int32_t)2095);//current_angles[0]);
-    dyna_workbench.goalPosition(ID_MOTOR_2, (int32_t)2095);//current_angles[1]);
-    send_data("OpenCR: Moved motors.");
-
-    current_state = State::Wait;
-}
-
-
-void pick()
-{
-	send_data("I received: " + msg + ", which converts to: " + nut_to_string(current_nut));
-	digitalWrite(VERRIN_PIN, HIGH);
-	digitalWrite(SOLENOID_PIN, LOW);
-	delay(10000);
-	digitalWrite(VERRIN_PIN, LOW);
-	digitalWrite(SOLENOID_PIN, HIGH);
-	dyna_workbench.goalPosition(ID_MOTOR_1, (int32_t)2095);//current_angles[0]);
-	dyna_workbench.goalPosition(ID_MOTOR_2, (int32_t)2095);//current_angles[1]);
-	delay(10000);
-	digitalWrite(VERRIN_PIN, HIGH);
-	digitalWrite(SOLENOID_PIN, LOW);
-	dyna_workbench.goalPosition(ID_MOTOR_1, (int32_t)1000);
-	dyna_workbench.goalPosition(ID_MOTOR_2, (int32_t)1000);
-	delay(10000);
-	digitalWrite(VERRIN_PIN, LOW);
-	digitalWrite(SOLENOID_PIN, HIGH);
-}
-
-
-// --- Messages ---
-void check_for_start()
-{
-    msg = get_data();
-    if (msg == "START")
-    {
-        send_data("Starting the program.");
-        start_motors();
-        current_state = State::Wait;
-    }
-}
-
-void check_for_stop()
-{
-    if (msg == "STOP")
-    {
-        send_data("Stopping the program.");
-        stop_motors();
-        current_state = State::Sleep;
-    }
-}
-
-void parse_msg()
-{
-    Nut nut = parse_nut(msg);
-    if (nut.coord.X != 9999 && nut.coord.Y != 9999 && nut.type != 9)
-    {
-        current_nut = nut;
-        current_state = State::Moving;
-    }
-    else
-    {
-        check_for_stop();
-    }
-}
-
+float motor_angles[4];
 
 // ---------- Main functions ----------
 void setup()
 {
+    const int BAUDRATE = 115200;
     Serial.begin(BAUDRATE);
-    init_motor(ID_MOTOR_1, NAME_MOTOR_1, MODEL_NB_MOTOR_1);
-    init_motor(ID_MOTOR_2, NAME_MOTOR_2, MODEL_NB_MOTOR_2);
-    pinMode(VERRIN_PIN, OUTPUT); // pin 4
-    pinMode(SOLENOID_PIN, OUTPUT); // pin 6
+
+    init_motors(dyna, MOTOR_IDS, motor_angles, LINEAR_PIN);
+    pinMode(LINEAR_PIN, OUTPUT);
+    pinMode(SOLENOID_PIN, OUTPUT);
 }
 
 void loop()
@@ -171,13 +52,23 @@ void loop()
     switch (current_state)
     {
         case State::Sleep:
+        {
             // Waiting for the signal to start the program
             send_data("Waiting for the START command.");
             delay(100);
-            check_for_start();
+            msg = get_data();
+            if(should_start(msg))
+            {
+                send_data("Starting the program.");
+                start_motors(dyna, MOTOR_IDS);
+                go_to_home(dyna, MOTOR_IDS, motor_angles, LINEAR_PIN);
+                current_state = State::Wait;
+            }
             break;
+        }
 
         case State::Wait:
+        {
             // Waiting for data on the serial port
             msg = get_data();
             if (msg.length() != 0)
@@ -185,19 +76,36 @@ void loop()
                 current_state = State::Parse;
             }
             break;
+        }
 
         case State::Parse:
-        	// checks for start, stop and sets nut values
-            parse_msg();
+        {
+            // checks for start, stop and sets nut values
+            Nut nut = parse_nut(msg);
+
+            if (nut.is_valid)
+            {
+                current_state = State::Moving;
+                current_nut = nut;
+            }
+            else if (should_stop(msg))
+            {
+                send_data("Stopping the program.");
+                stop_motors(dyna, MOTOR_IDS);
+                current_state = State::Sleep;
+            }         
             break;
+        }
 
         case State::Moving:
-            //run_demo();
-            //pick();
-            delay(1000);
-            //send_data("Done");
+        {
+            go_to_pick(current_nut, dyna, MOTOR_IDS, motor_angles, LINEAR_PIN, SOLENOID_PIN);
+            go_to_drop(current_nut, dyna, MOTOR_IDS, motor_angles, LINEAR_PIN, SOLENOID_PIN);
+            send_data("Done");
+            
             current_state = State::Wait;
             break;
+        }
     }
     delay(10);
 }
