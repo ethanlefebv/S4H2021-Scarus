@@ -1,6 +1,6 @@
-#include "actuators.h"
-#include "inverse_kinematics.h"
-#include "nut.h"
+#include "actuators.hpp"
+#include "inverse_kinematics.hpp"
+#include "nut.hpp"
 #include <Arduino.h>
 #include <DynamixelWorkbench.h>
 #include <vector>
