@@ -24,23 +24,20 @@ void move_to_pos(DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_ID
 /// Calls move_to_pos and waits until the movements are complete.
 bool move_to_pos_wait(DynamixelWorkbench& motor, const std::vector<uint8_t>& motor_IDs, float angles[4])
 {
-    int done_motors = 0;
-    for (int i = 0; i < 20 && done_motors != motor_IDs.size(); ++i)
+    bool move_complete = false;
+  
+    for (int i = 0; i < 100 && !move_complete; ++i)
     {
         move_to_pos(motor, motor_IDs, angles);
          
-        std::vector<int32_t> v_pos;
-        v_pos.reserve(motor_IDs.size());
+        int32_t pos0 = 0;
+        int32_t pos1 = 0;
+
+        motor.getPresentPositionData(motor_IDs[0], &pos0);
+        motor.getPresentPositionData(motor_IDs[1], &pos1);
+
+        move_complete = abs(degrees_to_int(angles[0]) - pos0) < 10 && abs(degrees_to_int(angles[1]) - pos1) < 10;
         
-        for (size_t j = 0; j < motor_IDs.size(); ++j)
-        {
-            motor.getPresentPositionData(motor_IDs[j], &v_pos[j]);
-            
-            if (abs(degrees_to_int(angles[j]) - v_pos[j]) < 3)
-            {
-                ++done_motors;
-            }
-        }
         delay(10);
     }
 }
