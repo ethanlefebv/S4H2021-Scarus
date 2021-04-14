@@ -6,6 +6,7 @@ from init_stop.init_stop_sequences import *
 if __name__ == '__main__':
     try:
         model_path = "Computer_Vision/models/yolov4-tiny-416-fp16-nutz.tflite"
+
         
         cam, port, ser = init_sequence()
         #cam, port, ser = init_fake_sequence()
