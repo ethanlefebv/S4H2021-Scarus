@@ -77,15 +77,6 @@ All the laser cut files are located in the DXF folder
 
 Link to the joint assembly video:
 
-### Arms
-1.  Put tape at both ends of the long arms (around one layer but could be more).They will be press fitted, so it is best if they are tight and do not slip.
-2.  Insert one long arm in the top part of the joint with the screw thread for the gripper facing down and the other long arm in the bottom piece of the same joint.
-3.  Insert the other end of the 2 long arms in the top part of 2 other joints.
-4.  Insert the short arms in the bottom parts of those joints.
-5.  Put the M3 x 10 mm screws and nuts in the joints to tighten it around the arms.
-
-Link to the arms assembly video:
-
 ### Motors
 3D print all the .stl files located in the STL/Robot/Motors sub-folder
 1.  Put the 3D printed coupling on the Dynamixel's coupling and screw it on with 4x M2 x 8 mm screws.
@@ -115,6 +106,15 @@ Link to the motors assembly video:
 9.  Screw the gripper onto the end of the robot.
 
 Link to the gripper assembly video:
+
+### Arms
+1.  Put tape at both ends of the long arms (around one layer but could be more).They will be press fitted, so it is best if they are tight and do not slip.
+2.  Insert one long arm in the top part of the joint with the screw thread for the gripper facing down and the other long arm in the bottom piece of the same joint.
+3.  Insert the other end of the 2 long arms in the top part of 2 other joints.
+4.  Insert the short arms in the bottom parts of those joints.
+5.  Put the M3 x 10 mm screws and nuts in the joints to tighten it around the arms.
+
+Link to the arms assembly video:
 
 ### Robot's base
 Laser cut all the .dxf files located in the DXF/ROBOT_BASE sub-folder
