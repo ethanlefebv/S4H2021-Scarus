@@ -75,7 +75,7 @@ All the laser cut files are located in the DXF folder
 4.  Clip the 2 caps to each end of the joint.
 5.  Repeat steps 1 to 4 for the other joints.
 
-Here's the [joint's assembly video](Videos/ASSY_JOINT.mp4).
+Here's the [joint's assembly video](VIDEOS/ASSY_JOINT.mp4).
 
 ### Motors
 3D print all the .stl files located in the STL/Robot/Motors sub-folder
@@ -89,7 +89,7 @@ Here's the [joint's assembly video](Videos/ASSY_JOINT.mp4).
 8.  Screw a motor 3D printed motor stand to the base of the motor with 4x M2.5 x 20 mm.
 9.  Repeat steps 1. to 8. for the other motors.
 
-Here's the [motor's assembly video](Videos/SUPPORT_MOTOR.mp4).
+Here's the [motor's assembly video](VIDEOS/SUPPORT_MOTOR.mp4).
 
 ### Gripper
 3D print all the .stl files located in the STL/Gripper sub-folder
@@ -105,7 +105,7 @@ Here's the [motor's assembly video](Videos/SUPPORT_MOTOR.mp4).
 8.  Screw the fan in the SOLENOID_COVER with 4x M4 x 15 mm.
 9.  Screw the gripper onto the end of the robot.
 
-Here's the [gripper's assembly video](Videos/ASSY_GRIPPER.mp4).
+Here's the [gripper's assembly video](VIDEOS/ASSY_GRIPPER.mp4).
 
 ### Arms
 1.  Put tape at both ends of the long arms (around one layer but could be more).They will be press fitted, so it is best if they are tight and do not slip.
@@ -115,7 +115,7 @@ Here's the [gripper's assembly video](Videos/ASSY_GRIPPER.mp4).
 5.  Put the M3 x 10 mm screws and nuts in the joints to tighten it around the arms.
 6.  Insert the short arms into the motor joints and screw them in with 2x M3 x 35 mm screws and 2x M3 nuts.
 
-Here's the [arms' assembly video](Videos/ASSY_SCARA_ROBOT.mp4).
+Here's the [arms' assembly video](VIDEOS/ASSY_SCARA_ROBOT.mp4).
 
 ### Robot's base
 Laser cut all the .dxf files located in the DXF/ROBOT_BASE sub-folder
