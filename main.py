@@ -5,9 +5,9 @@ from init_stop.init_stop_sequences import *
 if __name__ == '__main__':
     try:
         model_path = "Computer_Vision/models/yolov4-tiny-416-fp16-nutz.tflite"
-        
+
         cam, port, ser = init_sequence()
-        
+
         while True:
             nut = get_inference_nut(cam, model_path, False)
             nut_x = nut[0]
@@ -22,6 +22,6 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print('Program stopped by user.')
         stop_sequence(cam, port, ser)
-        
+
     except SerialError as se:
         print(se)
