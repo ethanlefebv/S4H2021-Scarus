@@ -1,15 +1,14 @@
 # S4H2021-Scarus
 
-This project is SCARA-like robot picking and placing nuts (as in bolts, nuts, washers) with the help of a computer vision system. 
-
-Further information about the vision system can be found in its own [documentation](Computer_Vision/README.md).
+This project is a SCARA-like robot picking and placing nuts (as in bolts, nuts, washers) with the help of a computer vision system. 
 
 ## Table of contents
 1. [Hardware requirements](#hardware-requirements)
 2. [Software requirements](#software-requirements)
 3. [Installation](#installation)
 4. [Running the program](#running-the-main-program)
-5. [License](#license)
+5. [More information](#more-information)
+6. [License](#license)
 
 ## Hardware requirements
 This section lists the hardware used when developing the project. Some parts could be swapped for variants, eg. the Raspberry Pi could have more RAM or be some more recent version.
@@ -18,7 +17,7 @@ This section lists the hardware used when developing the project. Some parts cou
 - XM430-W350 (2x) by ROBOTIS
 - A USB webcam ([link](https://www.amazon.ca/Microphone-Otooking-Streaming-Conferencing-Recording/dp/B08HYDZ6TN))
 
-A 3D printer is also required to print most parts. A laser cutter was also used for the slide. More details can be found [here](CAD/README.md).
+A 3D printer is also required to print most parts. A laser cutter was also used for the slide. More details can be found [here](Mechanical_Components/README.md).
 
 
 ## Software requirements
@@ -105,6 +104,16 @@ On the Pi, go in the root directory of the repo and run the following line :
 python3 main.py ARGS
 ```
 and replace ARGS with the necessary arguments (they can be listed by running `python3 main.py --help`).
+
+## More information
+
+Further information about the vision system can be found [here](Computer_Vision/README.md).
+
+A detailed BOM and assembly instructions are listed [here](Mechanical_Components/README.md).
+
+A diagram of the program structure can be found [here](main/README.md).
+
+A video explaining the project can be watched [here](https://youtu.be/wnFR6_URe1g) (in French with English subtitles).
 
 ## License
 Apache Version 2.0
