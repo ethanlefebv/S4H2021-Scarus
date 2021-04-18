@@ -80,7 +80,7 @@ void loop()
 
         case State::Parse:
         {
-            // checks for start, stop and sets nut values
+            // Try to parse the received message
             Nut nut = parse_nut(msg);
 
             if (nut.is_valid)
@@ -93,7 +93,12 @@ void loop()
                 send_data("Stopping the program.");
                 stop_motors(dyna, MOTOR_IDS);
                 current_state = State::Sleep;
-            }         
+            }
+            else
+            {
+                // Message is invalid
+                current_state = State::Wait;
+            }
             break;
         }
 
